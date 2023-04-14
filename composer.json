@@ -1,0 +1,16 @@
+{
+    "name": "geekbrains/leveltwo",
+    "autoload": {
+        "psr-4": {
+            "Geekbrains\\LevelTwo\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Svetlana"
+        }
+    ],
+    "require": {
+        "fakerphp/faker": "^1.21"
+    }
+}
