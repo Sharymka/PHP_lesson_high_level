@@ -2,6 +2,7 @@
 require_once __DIR__ .  "/vendor/autoload.php";
 
 
+use Geekbrains\LevelTwo\Blog\Commands\Arguments;
 use Geekbrains\LevelTwo\Blog\Commands\CreateUserCommand;
 use Geekbrains\LevelTwo\Blog\Exceptions\CommandException;
 use Geekbrains\LevelTwo\Blog\User;
@@ -24,7 +25,7 @@ $usersRepository = new SqliteUserRepository($connection);
 //
 try {
     $command = new CreateUserCommand($usersRepository);
-    $command->handle($argv);
+    $command->handle(Arguments::fromArgv($argv));
 //    $user2 = $usersRepository->get(new UUID('f5188b-cd3b-45ad-9e97-e9c7659ccd0e'));
 //    $user3 = $usersRepository->getByUsername('admin');
 //    echo $user3;
