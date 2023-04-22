@@ -2,6 +2,7 @@
 
 namespace Geekbrains\LevelTwo\Blog\Commands;
 
+use Geekbrains\LevelTwo\Blog\Exceptions\ArgumentsException;
 use Geekbrains\LevelTwo\Blog\Exceptions\CommandException;
 use Geekbrains\LevelTwo\Blog\Exceptions\UserNotFoundException;
 use Geekbrains\LevelTwo\Blog\Repositories\UserRepository\UsersRepositoryInterface;
@@ -16,6 +17,11 @@ class CreateUserCommand
     ) {
         }
 // Вместо массива принимаем объект типа Arguments
+
+    /**
+     * @throws ArgumentsException
+     * @throws CommandException
+     */
     public function handle(Arguments $arguments): void
     {
         $username = $arguments->get('username');
@@ -32,7 +38,7 @@ class CreateUserCommand
     {
         try {
             $this->usersRepository->getByUsername($username);
-        } catch (UserNotFoundException) {
+        } catch (UserNotFoundException $exception) {
             return false;
         }
         return true;

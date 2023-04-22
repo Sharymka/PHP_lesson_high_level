@@ -7,6 +7,7 @@ use Geekbrains\LevelTwo\Blog\Exceptions\ArgumentsException;
 class Arguments
 {
     private array $arguments = [];
+
     public function __construct(iterable $arguments)
     {
         foreach ($arguments as $argument => $value) {
@@ -14,16 +15,29 @@ class Arguments
             $stringValue = trim((string)$value);
 // Пропускаем пустые значения
             if (empty($stringValue)) {
-                continue;
+                throw new ArgumentsException("value doesn't have to be empty!");
 }
 // Также приводим к строкам ключ
             $this->arguments[(string)$argument] = $stringValue;
         }
-        var_dump($this->arguments);
     }
+
+    /**
+     * @return array
+     */
+    public function getArguments(): array
+    {
+        return $this->arguments;
+    }
+
 // Переносим сюда логику разбора аргументов командной строки
+
+    /**
+     * @throws ArgumentsException
+     */
     public static function fromArgv(array $argv): self
     {
+//        var_dump($argv);
         $arguments = [];
         foreach ($argv as $argument) {
             $parts = explode('=', $argument);
@@ -32,12 +46,17 @@ class Arguments
             }
             $arguments[$parts[0]] = $parts[1];
         }
-        var_dump($arguments);
         return new self($arguments);
     }
+
+    /**
+     * @throws ArgumentsException
+     */
     public function get(string $argument): string
     {
+        var_dump($this->arguments);
         if (!array_key_exists($argument, $this->arguments)) {
+            var_dump($argument);
             throw new ArgumentsException(
                 "No such argument: $argument"
             );

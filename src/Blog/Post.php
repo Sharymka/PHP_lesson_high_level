@@ -6,77 +6,55 @@ use Geekbrains\LevelTwo\Person\Person;
 
 class Post
 {
-    private int $id;
-    private User $person;
-    private string $text;
+    private string $uuid;
+    private string $author_uuid;
     private string $title;
+    private string $text;
+
 
     /**
-     * @param int $id
-     * @param Person $person
+     * @param string $uuid
+     * @param string $author_uuid
      * @param string $text
      */
-    public function __construct(int $id, User $person, string $text, string $title)
+    public function __construct(string $uuid, string $author_uuid,string $title, string $text)
     {
-        $this->id = $id;
-        $this->person = $person;
-        $this->text = $text;
+        $this->uuid = $uuid;
+        $this->author_uuid = $author_uuid;
         $this->title = $title;
+        $this->text = $text;
+
     }
 
-    public function __toString(): string
+//    public function __toString(): string
+//    {
+//        return   $this->title . ' : ' .' ' . $this->person . 'пишет: ' . $this->text .PHP_EOL;
+//    }
+
+    /**
+     * @return string
+     */
+    public function authorUuid(): string
     {
-        return   $this->title . ' : ' .' ' . $this->person . 'пишет: ' . $this->text .PHP_EOL;
+        return $this->author_uuid;
     }
-
 
     /**
      * @return int
      */
-    public function getId(): int
+    public function uuid(): string
     {
-        return $this->id;
-    }
-
-    /**
-     * @param int $id
-     */
-    public function setId(int $id): void
-    {
-        $this->id = $id;
-    }
-
-    /**
-     * @return User
-     */
-    public function getPerson(): User
-    {
-        return $this->person;
-    }
-
-    /**
-     * @param User $person
-     */
-    public function setPerson(User $person): void
-    {
-        $this->person = $person;
+        return $this->uuid;
     }
 
     /**
      * @return string
      */
-    public function getText(): string
+    public function text(): string
     {
         return $this->text;
     }
 
-    /**
-     * @param string $text
-     */
-    public function setText(string $text): void
-    {
-        $this->text = $text;
-    }
 
     /**
      * @return string

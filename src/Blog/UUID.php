@@ -13,6 +13,14 @@ class UUID
             );
         }
     }
+
+    /**
+     * @return string
+     */
+    public function getUuidString(): string
+    {
+        return $this->uuidString;
+    }
     public function __toString(): string{
         return $this->uuidString;
     }

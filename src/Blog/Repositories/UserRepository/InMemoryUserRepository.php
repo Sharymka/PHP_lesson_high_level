@@ -12,7 +12,8 @@ class InMemoryUserRepository implements UsersRepositoryInterface
     /**
      * @param User $user
      */
-    public function save(User $user) : void {
+    public function save(User $user): void
+    {
         $this->users[] = $user;
     }
 
@@ -21,20 +22,23 @@ class InMemoryUserRepository implements UsersRepositoryInterface
      * @return User
      * @throws UserNotFoundException
      */
-    public function get(UUID $uuid): User {
+    public function get(UUID $uuid): User
+    {
         foreach ($this->users as $user) {
-            if((string)$user->uuid() == (string)$uuid) {
+            if ((string)$user->uuid() == (string)$uuid) {
                 return $user;
             }
         }
         throw new  UserNotFoundException("User not found: $uuid");
     }
 
-    public function getByUsername(string $username): User {
+    public function getByUsername(string $username): User
+    {
         foreach ($this->users as $user) {
-            if((string)$user->username() == $username) {
+            if ((string)$user->username() == $username) {
                 return $user;
             }
-    }
+        }
         throw new  UserNotFoundException("User not found: $username");
+    }
 }

@@ -2,11 +2,12 @@
 
 namespace Geekbrains\LevelTwo\Blog\Repositories\UserRepository;
 
+use Geekbrains\LevelTwo\Blog\Exceptions\InvalidArgumentException;
 use Geekbrains\LevelTwo\Blog\User;
 use Geekbrains\LevelTwo\Blog\UUID;
 use Geekbrains\LevelTwo\Blog\Exceptions\UserNotFoundException;
 use Geekbrains\LevelTwo\Person\Name;
-
+use Geekbrains\LevelTwo\Blog\Repositories\UserRepository\UsersRepositoryInterface;
 use \PDO;
 
 class SqliteUserRepository implements UsersRepositoryInterface
@@ -50,8 +51,10 @@ class SqliteUserRepository implements UsersRepositoryInterface
 
     /**
      * @throws UserNotFoundException
+     * @throws InvalidArgumentException
      */
     public function getByUsername(string $username): User {
+        var_dump('привет ');
         $statement = $this->connection->prepare('SELECT * FROM users WHERE username = :username');
         $statement ->execute([
            ':username'=> $username
@@ -61,6 +64,10 @@ class SqliteUserRepository implements UsersRepositoryInterface
 
     }
 
+    /**
+     * @throws UserNotFoundException
+     * @throws InvalidArgumentException
+     */
     public function getUser(\PDOStatement $statement, string $str): User {
         $result = $statement->fetch(PDO::FETCH_ASSOC);
         if($result === false) {
