@@ -2,7 +2,7 @@
 
 namespace Geekbrains\LevelTwo\Blog;
 use Geekbrains\LevelTwo\Blog\Exceptions\InvalidArgumentException;
-class UUID
+class UUID extends \Geekbrains\LevelTwo\Blog\Post
 {
     public function __construct(
         private string $uuidString

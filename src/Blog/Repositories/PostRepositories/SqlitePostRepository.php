@@ -3,10 +3,16 @@
 namespace Geekbrains\LevelTwo\Blog\Repositories\PostRepositories;
 
 use Geekbrains\LevelTwo\Blog\Comment;
+use Geekbrains\LevelTwo\Blog\User;
 use Geekbrains\LevelTwo\Blog\Exceptions\CommandException;
+use Geekbrains\LevelTwo\Blog\Exceptions\InvalidArgumentException;
+use Geekbrains\LevelTwo\Blog\Exceptions\UserNotFoundException;
 use Geekbrains\LevelTwo\Blog\Post;
+use Geekbrains\LevelTwo\Blog\Repositories\UserRepository\SqliteUserRepository;
 use Geekbrains\LevelTwo\Blog\UUID;
+use Geekbrains\LevelTwo\Person\Name;
 use PDO;
+use PhpParser\Node\Expr\Array_;
 
 class SqlitePostRepository
 {
@@ -25,8 +31,8 @@ class SqlitePostRepository
 // Выполняем запрос с конкретными значениями
         $statement->execute([
             ':uuid' => (string)$post->uuid(),
-            ':author_uuid' => $post->uuid(),
-            ':title' => $post->authorUuid(),
+            ':author_uuid' => $post->user()->uuid(),
+            ':title' => $post->title(),
             ':text' => $post->text(),
 
         ]);
@@ -35,8 +41,10 @@ class SqlitePostRepository
 
     /**
      * @throws CommandException
+     * @throws InvalidArgumentException
+     * @throws UserNotFoundException
      */
-    public function get(UUID $uuid): Post {
+    public function get(UUID $uuid): Array {
         $statement = $this->connection->prepare(
             'SELECT * FROM posts WHERE uuid = :uuid'
         );
@@ -47,15 +55,19 @@ class SqlitePostRepository
         $result = $statement->fetch(PDO::FETCH_ASSOC);
 
         if(!$result) {
-            throw new CommandException('There is no such post!');
+            throw new CommandException("Not found Post with id: $uuid");
         }
 
-        return new Post(
-            $result['uuid'],
-            $result['author_uuid'],
-            $result['title'],
-            $result['text']
-        );
+//        $userRepository = new SqliteUserRepository($this->connection);
+//        $user = $userRepository->get(new UUID($result['author_uuid']));
+
+        return $result;
+//        return new Post(
+//            new UUID($result['uuid']),
+//            $user,
+//            $result['title'],
+//            $result['text']
+//        );
     }
 
 }

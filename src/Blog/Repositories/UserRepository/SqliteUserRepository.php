@@ -37,6 +37,7 @@ class SqliteUserRepository implements UsersRepositoryInterface
 
     /**
      * @throws UserNotFoundException
+     * @throws InvalidArgumentException
      */
     public function get(UUID $uuid): User {
         $statement = $this->connection->prepare(
