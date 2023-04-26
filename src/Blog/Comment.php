@@ -1,8 +1,7 @@
 <?php
 
 namespace Geekbrains\LevelTwo\Blog;
-use Geekbrains\LevelTwo\Blog\Post;
-use Geekbrains\LevelTwo\Blog\User;
+
 
 class Comment
 {
@@ -14,10 +13,9 @@ class Comment
     /**
      * @param string $uuid
      * @param User $user
-     * @param string $post_uuid
      * @param Post $post
      */
-    public function __construct(string $uuid, User $user, Post $post, string $text)
+    public function __construct(string $uuid, Post $post, User $user, string $text)
     {
         $this->uuid = $uuid;
         $this->user = $user;
@@ -34,7 +32,7 @@ class Comment
     /**
      * @return int
      */
-    public function authorUuid(): User
+    public function user(): User
     {
         return $this->user;
     }
@@ -42,7 +40,7 @@ class Comment
     /**
      * @return int
      */
-    public function postUuid(): Post
+    public function post(): Post
     {
         return $this->post;
     }

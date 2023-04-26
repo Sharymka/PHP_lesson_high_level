@@ -24,8 +24,8 @@ class SqliteCommentRepository
 // Выполняем запрос с конкретными значениями
         $statement->execute([
             ':uuid' => (string)$comment->uuid(),
-            ':post_uuid' => $comment->postUuid(),
-            ':author_uuid' => $comment->authorUuid(),
+            ':post_uuid' => $comment->post()->uuid(),
+            ':author_uuid' => $comment->user()->uuid(),
             ':text' => $comment->getText(),
 
         ]);
@@ -46,7 +46,7 @@ class SqliteCommentRepository
         $result = $statement->fetch(PDO::FETCH_ASSOC);
 
         if(!$result) {
-            throw new CommandException('There is no such comment!');
+            throw new CommandException("Not found Comment with id: $uuid");
         }
 
         return new Comment(

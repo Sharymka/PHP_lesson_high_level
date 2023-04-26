@@ -32,7 +32,7 @@ class SqlitePostsRepositoryTest extends TestCase
             ->method('execute')
             ->with([
                 ':uuid'=>'e15f6930-4a94-4f01-9d6c-3455133b3c54',
-                ':author_uuid'=>'e15f6930-4a94-4f01-9d6c-3455133b3c54',
+                ':author_uuid'=>'e15f6930-4a94-4f01-9d6c-3466133b3c77',
                 ':title'=>'title',
                 ':text'=>'text'
             ]);
@@ -41,7 +41,7 @@ class SqlitePostsRepositoryTest extends TestCase
 
         $repository = new SqlitePostRepository($connectionStub);
         $user = new User(
-            new UUID('e15f6930-4a94-4f01-9d6c-3455133b3c54'),
+            new UUID('e15f6930-4a94-4f01-9d6c-3466133b3c77'),
             new Name('Svetlana','Ivanova'),
             'sveta123'
         );
