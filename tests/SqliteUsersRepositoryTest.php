@@ -2,6 +2,8 @@
 
 namespace Geekbrains\LevelTwo;
 
+use Geekbrains\LevelTwo\Blog\Exceptions\InvalidArgumentException;
+use Geekbrains\LevelTwo\Blog\Exceptions\UserNotFoundException;
 use Geekbrains\LevelTwo\Blog\User;
 use Geekbrains\LevelTwo\Blog\UUID;
 use Geekbrains\LevelTwo\Person\Name;
@@ -13,8 +15,35 @@ use Geekbrains\LevelTwo\Blog\Repositories\UserRepository\SqliteUserRepository;
 class SqliteUsersRepositoryTest extends TestCase
 {
 
-    // Тест, проверяющий, что SQLite-репозиторий бросает исключение,
-// когда запрашиваемый пользователь не найден
+    /**
+     * @throws UserNotFoundException
+     * @throws Exception
+     * @throws InvalidArgumentException
+     */
+    function testItGetsUserByUuid(){
+        $connectionStub = $this->createStub(\PDO::class);
+        $statementMock = $this->createMock(\PDOStatement::class);
+
+        $statementMock->method('fetch')->willReturn([
+            'uuid' => 'e1b3db34-f69f-4425-bbfb-d437ed08a0a1',
+            'first_name' => 'Linda',
+            'last_name' => 'Petrova',
+            'username' => 'linda234'
+        ]);
+
+
+        $connectionStub->method('prepare')->willReturn($statementMock);
+        $repositoryUser = new SqliteUserRepository($connectionStub);
+
+        $user = $repositoryUser->get(new UUID('e1b3db34-f69f-4425-bbfb-d437ed08a0a1'));
+
+        $this->assertSame('e1b3db34-f69f-4425-bbfb-d437ed08a0a1', (string)$user->uuid());
+        $this->assertSame('Linda', $user->name()->getFirstName());
+        $this->assertSame('Petrova', $user->name()->getLastName());
+        $this->assertSame('linda234', $user->username());
+    }
+
+
     /**
      * @throws Exception
      */

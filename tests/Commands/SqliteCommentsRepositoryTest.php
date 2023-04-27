@@ -66,7 +66,7 @@ class SqliteCommentsRepositoryTest extends TestCase
             ->expects($this->once())
             ->method('execute')
             ->with([
-                'uuid'=>'f9cdfe1c-1a03-4786-89a4-f4a871696928',
+                ':uuid'=>'f9cdfe1c-1a03-4786-89a4-f4a871696928',
             ]);
 
         $statementMock->method('fetch')->willReturn(false);

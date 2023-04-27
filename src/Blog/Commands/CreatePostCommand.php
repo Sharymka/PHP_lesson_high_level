@@ -14,13 +14,11 @@ use Geekbrains\LevelTwo\Person\Name;
 
 class CreatePostCommand
 {
-    private User $user;
-    private Post $post;
-
 
     public function __construct(
-        private SqlitePostRepository $postRepository,
-        private SqliteUserRepository $userRepository
+        private SqliteUserRepository $userRepository,
+        private SqlitePostRepository $postRepository
+
     )
     {
     }
@@ -33,7 +31,7 @@ class CreatePostCommand
      */
     public function getPost(UUID $uuid) {
         $result =  $this->postRepository->get($uuid);
-        return new Post(new UUID($result['uuid']), $this->getUser($result['author_uuid']), $result['title'], $result['text']);
+        return new Post(new UUID($result['uuid']), $this->getUser(new UUID($result['author_uuid'])), $result['title'], $result['text']);
      }
 
     /**
@@ -41,7 +39,6 @@ class CreatePostCommand
      * @throws InvalidArgumentException
      */
     public function getUser(UUID $uuid) {
-        $result =  $this->userRepository->get($uuid);
-        return new User(new UUID($result['uuid']), new Name($result['first_name'], $result['last_name']), $result['username']);
+        return $this->userRepository->get($uuid);
     }
 }

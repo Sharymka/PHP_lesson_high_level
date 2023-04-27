@@ -44,10 +44,22 @@ class SqliteUserRepository implements UsersRepositoryInterface
             'SELECT * FROM users WHERE uuid = :uuid'
         );
         $statement->execute([
-            'uuid'=> (string) $uuid,
+            ':uuid'=> (string)$uuid,
         ]);
 
-        return $this->getUser($statement, $uuid);
+        $result = $statement->fetch(PDO::FETCH_ASSOC);
+
+        if($result === false) {
+            throw new UserNotFoundException(
+                "Cannot find user: uuid [$uuid]"
+            );
+        }
+
+        return new User(
+            new UUID($result['uuid']),
+            new Name($result['first_name'], $result['last_name'] ),
+            $result['username']
+        );
     }
 
     /**
@@ -61,25 +73,26 @@ class SqliteUserRepository implements UsersRepositoryInterface
            ':username'=> $username
         ]);
 
-        return $this->getUser($statement, $username);
-
-    }
-
-    /**
-     * @throws UserNotFoundException
-     * @throws InvalidArgumentException
-     */
-    public function getUser(\PDOStatement $statement, string $str): User {
         $result = $statement->fetch(PDO::FETCH_ASSOC);
+
         if($result === false) {
             throw new UserNotFoundException(
-                "Cannot find user: $str"
+                "Cannot find user: name [$username]"
             );
         }
-        return new User(
+
+       return new User(
             new UUID($result['uuid']),
             new Name($result['first_name'], $result['last_name'] ),
-            $str
+            $result['username']
         );
     }
+
+//    private function getUser(?Array $result): User {
+//        return new User(
+//            new UUID($result['uuid']),
+//            new Name($result['first_name'], $result['last_name'] ),
+//            $result['username']
+//        );
+//    }
 }
