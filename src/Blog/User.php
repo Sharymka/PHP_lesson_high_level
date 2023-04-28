@@ -4,74 +4,48 @@ use Geekbrains\LevelTwo\Person\Name;
 
 class User
 {
-    private int $id;
-
-    private Name $username;
-    private string $login;
+    private UUID $uuid;
+    private Name $name;
+    private string $username;
 
     /**
-     * @param int $id
-     * @param Name $username
-     * @param string $login
+     * @param UUID $uuid
+     * @param Name $name
+     * @param string $username
      */
-    public function __construct(int $id, Name $username, string $login)
+    public function __construct(UUID $uuid, Name $name, string $username)
     {
-        $this->id = $id;
+        $this->uuid = $uuid;
+        $this->name = $name;
         $this->username = $username;
-        $this->login = $login;
     }
 
     public function __toString(): string
     {
-        return "пользователь $this->id с именем $this->username и логином $this->login ";
+        return "пользователь $this->uuid с именем $this->name и логином $this->username ";
     }
 
     /**
-     * @return int
+     * @return UUID
      */
-    public function getId(): int
+    public function uuid(): UUID
     {
-        return $this->id;
-    }
-
-    /**
-     * @param int $id
-     */
-    public function setId(int $id): void
-    {
-        $this->id = $id;
+        return $this->uuid;
     }
 
     /**
      * @return Name
      */
-    public function getUsername(): Name
+    public function name(): Name
     {
-        return $this->username;
-    }
-
-    /**
-     * @param Name $username
-     */
-    public function setUsername(Name $username): void
-    {
-        $this->username = $username;
+        return $this->name;
     }
 
     /**
      * @return string
      */
-    public function getLogin(): string
+    public function username(): string
     {
-        return $this->login;
+        return $this->username;
     }
-
-    /**
-     * @param string $login
-     */
-    public function setLogin(string $login): void
-    {
-        $this->login = $login;
-    }
-
 }
