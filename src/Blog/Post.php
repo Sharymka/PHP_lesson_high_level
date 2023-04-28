@@ -6,43 +6,43 @@ use Geekbrains\LevelTwo\Person\Person;
 
 class Post
 {
-    private string $uuid;
-    private string $author_uuid;
+    private UUID $uuid;
+    private User $user;
     private string $title;
     private string $text;
 
 
     /**
-     * @param string $uuid
-     * @param string $author_uuid
+     * @param UUID $uuid
+     * @param User $user
      * @param string $text
      */
-    public function __construct(string $uuid, string $author_uuid,string $title, string $text)
+    public function __construct(UUID $uuid, User $user, string $title, string $text)
     {
         $this->uuid = $uuid;
-        $this->author_uuid = $author_uuid;
+        $this->user = $user;
         $this->title = $title;
         $this->text = $text;
 
     }
 
-//    public function __toString(): string
-//    {
-//        return   $this->title . ' : ' .' ' . $this->person . 'пишет: ' . $this->text .PHP_EOL;
-//    }
-
-    /**
-     * @return string
-     */
-    public function authorUuid(): string
+    public function __toString(): string
     {
-        return $this->author_uuid;
+        return   $this->title . ' : ' .' ' . $this->user->name() . 'пишет: ' . $this->text .PHP_EOL;
     }
 
     /**
-     * @return int
+     * @return User
      */
-    public function uuid(): string
+    public function user(): User
+    {
+        return $this->user;
+    }
+
+    /**
+     * @return UUID
+     */
+    public function uuid(): UUID
     {
         return $this->uuid;
     }
@@ -59,7 +59,7 @@ class Post
     /**
      * @return string
      */
-    public function getTitle(): string
+    public function title(): string
     {
         return $this->title;
     }

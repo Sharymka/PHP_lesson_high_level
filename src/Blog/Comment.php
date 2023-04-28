@@ -1,50 +1,48 @@
 <?php
 
 namespace Geekbrains\LevelTwo\Blog;
-use Geekbrains\LevelTwo\Blog\User;
-use Geekbrains\LevelTwo\Blog\Post;
+
 
 class Comment
 {
     private string $uuid;
-    private string $author_uuid;
-    private string $post_uuid;
+    private User $user;
+    private Post $post;
     private string $text;
 
     /**
      * @param string $uuid
-     * @param string $author_uuid
-     * @param string $post_uuid
-     * @param string $text
+     * @param User $user
+     * @param Post $post
      */
-    public function __construct(string $uuid, string $author_uuid, string $post_uuid, string $text)
+    public function __construct(string $uuid, Post $post, User $user, string $text)
     {
         $this->uuid = $uuid;
-        $this->author_uuid = $author_uuid;
-        $this->post_uuid = $post_uuid;
+        $this->user = $user;
+        $this->post = $post;
         $this->text = $text;
     }
 
-//    public function __toString(): string
-//    {
-//        return 'пост: ' . $this->post->getText() . PHP_EOL . 'пользователь: ' .  $this->user->getUsername() .
-//            PHP_EOL . 'комментарий: ' . $this->text . PHP_EOL;
-//    }
-
-    /**
-     * @return int
-     */
-    public function authorUuid(): string
+    public function __toString(): string
     {
-        return $this->author_uuid;
+        return 'пост: ' . $this->post->text() . PHP_EOL . 'пользователь: ' .  $this->user->username() .
+            PHP_EOL . 'комментарий: ' . $this->text . PHP_EOL;
     }
 
     /**
      * @return int
      */
-    public function postUuid(): string
+    public function user(): User
     {
-        return $this->post_uuid;
+        return $this->user;
+    }
+
+    /**
+     * @return int
+     */
+    public function post(): Post
+    {
+        return $this->post;
     }
 
     /**

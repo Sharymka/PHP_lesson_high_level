@@ -8,6 +8,9 @@ class Arguments
 {
     private array $arguments = [];
 
+    /**
+     * @throws ArgumentsException
+     */
     public function __construct(iterable $arguments)
     {
         foreach ($arguments as $argument => $value) {
@@ -15,7 +18,7 @@ class Arguments
             $stringValue = trim((string)$value);
 // Пропускаем пустые значения
             if (empty($stringValue)) {
-                throw new ArgumentsException("value doesn't have to be empty!");
+                continue;
 }
 // Также приводим к строкам ключ
             $this->arguments[(string)$argument] = $stringValue;
@@ -54,9 +57,7 @@ class Arguments
      */
     public function get(string $argument): string
     {
-        var_dump($this->arguments);
         if (!array_key_exists($argument, $this->arguments)) {
-            var_dump($argument);
             throw new ArgumentsException(
                 "No such argument: $argument"
             );
