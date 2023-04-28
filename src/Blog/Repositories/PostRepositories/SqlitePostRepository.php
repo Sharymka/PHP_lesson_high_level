@@ -10,11 +10,12 @@ use Geekbrains\LevelTwo\Blog\Exceptions\UserNotFoundException;
 use Geekbrains\LevelTwo\Blog\Post;
 use Geekbrains\LevelTwo\Blog\Repositories\UserRepository\SqliteUserRepository;
 use Geekbrains\LevelTwo\Blog\UUID;
+use Geekbrains\LevelTwo\Http\ErrorResponse;
 use Geekbrains\LevelTwo\Person\Name;
 use PDO;
 use PhpParser\Node\Expr\Array_;
 
-class SqlitePostRepository
+class SqlitePostRepository implements PostsRepositoryInterface
 {
     private PDO $connection;
     public function __construct(PDO $connection) {
@@ -68,6 +69,23 @@ class SqlitePostRepository
 //            $result['title'],
 //            $result['text']
 //        );
+    }
+
+    /**
+     * @throws CommandException
+     */
+    public function delete(UUID $uuid){
+
+        try{
+            $this->get(new UUID($uuid));
+        } catch(CommandException $e) {
+            return new ErrorResponse($e->getMessage());
+        }
+
+        $statement = $this->connection->prepare('DELETE FROM posts WHERE uuid = :uuid');
+        $statement->execute([
+            'uuid' =>(string)$uuid
+        ]);
     }
 
 }

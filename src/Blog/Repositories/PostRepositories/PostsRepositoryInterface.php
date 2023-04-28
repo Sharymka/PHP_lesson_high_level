@@ -8,6 +8,8 @@ use Geekbrains\LevelTwo\Blog\UUID;
 interface PostsRepositoryInterface
 {
     public function save(Post $post): void;
-    public function get(UUID $uuid): Post;
+    public function get(UUID $uuid): Array;
+
+    public function delete(UUID $uuid);
 
 }

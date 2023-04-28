@@ -51,7 +51,7 @@ class SqliteUserRepository implements UsersRepositoryInterface
 
         if($result === false) {
             throw new UserNotFoundException(
-                "Cannot find user: uuid [$uuid]"
+                "User not found: uuid [$uuid]"
             );
         }
 
@@ -67,7 +67,6 @@ class SqliteUserRepository implements UsersRepositoryInterface
      * @throws InvalidArgumentException
      */
     public function getByUsername(string $username): User {
-        var_dump('привет ');
         $statement = $this->connection->prepare('SELECT * FROM users WHERE username = :username');
         $statement ->execute([
            ':username'=> $username
@@ -77,7 +76,7 @@ class SqliteUserRepository implements UsersRepositoryInterface
 
         if($result === false) {
             throw new UserNotFoundException(
-                "Cannot find user: name [$username]"
+                "User not found: name [$username]"
             );
         }
 
