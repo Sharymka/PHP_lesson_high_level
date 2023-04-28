@@ -15,7 +15,9 @@
         "php": "^8.0",
 
         "ext-pdo": "*",
-        "symfony/polyfill-uuid": "^1.27"
+        "symfony/polyfill-uuid": "^1.27",
+        "ext-mbstring": "*",
+      "ext-http": "*"
     },
     "require-dev": {
         "fakerphp/faker": "^1.21",

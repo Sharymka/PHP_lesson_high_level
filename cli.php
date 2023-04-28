@@ -25,6 +25,8 @@ $commentRepository = new SqliteCommentRepository($connection);
 $postRepository = new SqlitePostRepository($connection);
 
 try {
+
+    $postRepository->delete(new UUID('02000775-c963-43a3-b644-36bf95caf7c4'));
 //    $command = new CreateUserCommand($usersRepository);
 //    $command->handle(Arguments::fromArgv($argv));
 
@@ -34,12 +36,12 @@ try {
 //    $comment = $commentCommand->get((new UUID('1fce963f-e6ab-4861-9632-c95c37f8c755')));
 //    var_dump($comment);
 
-    $user = new User(new UUID(UUID::random()), new Name('Lev', 'Petrushin'), 'lev2022');
-    // добавление поста из командной строки
-    $postCommand = new CreatePostCommand($postRepository);
-//    $postCommand->addPost(new Post((new UUID(UUID::random())), $user, 'wather',  OtherArguments::get($argv) ));
-    $post = $postCommand->get(new UUID('acbc10fe-78a2-4c47-8833-8ebbc34a9bcb'));
-    var_dump($post);
+//    $user = new User(new UUID(UUID::random()), new Name('Lev', 'Petrushin'), 'lev2022');
+//    // добавление поста из командной строки
+//    $postCommand = new CreatePostCommand($usersRepository, $postRepository);
+////    $postCommand->addPost(new Post((new UUID(UUID::random())), $user, 'wather',  OtherArguments::get($argv) ));
+//    $post = $postCommand->getPost(new UUID('acbc10fe-78a2-4c47-8833-8ebbc34a9bcb'));
+//    var_dump($post);
 
 } catch (CommandException $ex) {
     echo $ex->getMessage();
