@@ -75,14 +75,10 @@ try {
 
 try {
     $response = $action->handle($request);
-} catch (AppException|Error $e) {
+} catch (AppException $e) {
     (new ErrorResponse($e->getMessage()))->send();
 }
-
-try{
     $response->send();
-}catch (Error $e){
-    echo $e->getMessage();
-}
+
 
 

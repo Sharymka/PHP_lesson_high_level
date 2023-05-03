@@ -1,6 +1,6 @@
 <?php
 
-namespace Geekbrains\LevelTwo;
+namespace Geekbrains\LevelTwo\UnitTests;
 
 use Geekbrains\LevelTwo\Blog\Commands\CreatePostCommand;
 use Geekbrains\LevelTwo\Blog\Exceptions\CommandException;
@@ -97,13 +97,13 @@ class SqlitePostsRepositoryTest extends TestCase
             ->expects($this->once())
             ->method('execute')
             ->with([
-                'uuid'=>'f9cdfe1c-1a03-4786-89a4-f4a871696928',
+                ':uuid'=>'f9cdfe1c-1a03-4786-89a4-f4a871696928',
             ]);
 
         $statementMock->method('fetch')->willReturn(false);
 
-        $this->expectException(CommandException::class);
-        $this->expectExceptionMessage("Not found Post with id: f9cdfe1c-1a03-4786-89a4-f4a871696928");
+        $this->expectException(PostNotFoundException::class);
+        $this->expectExceptionMessage("Post not found: uuid [f9cdfe1c-1a03-4786-89a4-f4a871696928]");
 
         $connectionStub->method('prepare')->willReturn($statementMock);
         $repository = new SqlitePostRepository($connectionStub);

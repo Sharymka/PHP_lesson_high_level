@@ -1,6 +1,6 @@
 <?php
 
-namespace Geekbrains\LevelTwo;
+namespace Geekbrains\LevelTwo\UnitTests;
 
 use Geekbrains\LevelTwo\Blog\Exceptions\InvalidArgumentException;
 use Geekbrains\LevelTwo\Blog\Exceptions\UserNotFoundException;

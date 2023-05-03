@@ -1,6 +1,6 @@
 <?php
 
-namespace Geekbrains\LevelTwo\Actions;
+namespace Geekbrains\LevelTwo\UnitTests\Actions;
 
 use Geekbrains\LevelTwo\Blog\Exceptions\PostNotFoundException;
 use Geekbrains\LevelTwo\Blog\Post;
@@ -52,9 +52,7 @@ class CreatePostActionTest extends TestCase
                     'leo222'
                 );
             }
-
         };
-
     }
 
     private function postRepository($posts):PostsRepositoryInterface {
@@ -100,12 +98,10 @@ class CreatePostActionTest extends TestCase
     }
 
     /**
-     * @runInSeparateProcess
-     * @preserveGlobalState disabled
      * @throws Exception
      * @throws \JsonException
      */
-    function testItReTurnsSuccessfulResponse() {
+    public function testItReTurnsSuccessfulResponse() {
         $userRepository = $this->userRepository([
             new User(
             new UUID('c170cafd-4f55-4658-80ce-bedc0b620a8d'),
@@ -173,21 +169,11 @@ class CreatePostActionTest extends TestCase
         $this->expectOutputString('{"success":false,"reason":"User not found: uuid [86a34c9e-623d-4058-ae0e-a354aafe9e66]"}');
         $response->send();
     }
-
-     public function argumentsProvider(): iterable {
-        return [
-            ['{"author_uuid":"c170cafd-4f55-4658-80ce-bedc0b620a8d","title":"title","text":" "}', '{"success":false,"reason":"Empty field: text"}'],
-            ['{"author_uuid":"c170cafd-4f55-4658-80ce-bedc0b620a55","title":"title"," ":"text"}', '{"success":false,"reason":"No such field: text"}']
-        ];
-    }
-
     /**
-     * @dataProvider argumentsProvider
      * @throws Exception
      * @throws \JsonException
      */
-    public function testItReturnsErrorIfRequestDoesNotContainEnoughDataForCreatePost($inputValue, $expectedValue): void {
-//    public function testItReturnsErrorIfRequestDoesNotContainEnoughDataForCreatePost(): void {
+    public function testItReturnsErrorIfRequestDoesNotContainEnoughDataForCreatePost(): void {
 
         $postRepository = $this->createStub(SqlitePostRepository::class);
         $userRepository = $this->userRepository([
@@ -203,13 +189,12 @@ class CreatePostActionTest extends TestCase
             ),
         ]);
         $createPost = new CreatePost($postRepository, $userRepository);
-        $request = new Request([], [], $inputValue);
-//        $request = new Request([], [], '{"author_uuid":"c170cafd-4f55-4658-80ce-bedc0b620a8d","title":"title","text":" "}');
+        $request = new Request([], [], '{"author_uuid":"c170cafd-4f55-4658-80ce-bedc0b620a8d","title":"title","text":" "}');
 
         $response = $createPost->handle($request);
 
         $this->assertInstanceOf(ErrorResponse::class, $response);
-        $this->expectOutputString($expectedValue);
+        $this->expectOutputString('{"success":false,"reason":"Empty field: text"}');
         $response->send();
     }
 

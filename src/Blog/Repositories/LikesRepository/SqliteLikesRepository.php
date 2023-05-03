@@ -22,46 +22,55 @@ class SqliteLikesRepository implements LikesRepositoryInterface
      * @throws PostNotFoundException
      * @throws InvalidArgumentException
      */
-    public function getByPostUuid(string $postUuid): Array
+    public function getByPostUuid(string $postUuid): ?array
     {
+
         $statement = $this->connection->prepare(
             "SELECT * FROM likes WHERE (post_uuid = :postUuid)"
         );
         $statement->execute([
             ":postUuid" => $postUuid
         ]);
-
-        $result = $statement->fetchAll(PDO::FETCH_ASSOC);
-
-        if(!$result) {
-            throw new PostNotFoundException("Post inside likes not found: uuid [$postUuid]");
-        }
         $allLikes = [];
-        foreach ($result as $like) {
-            $allLikes[] = new Like(
-                new UUID($like['uuid']),
-                $like['post_uuid'],
-                $like['author_uuid']
-            );
-        }
-        return new $allLikes;
 
+        while ($result = $statement->fetch(PDO::FETCH_ASSOC)) {
+            $allLikes[] =
+                new Like(
+                    new UUID($result['uuid']),
+                    $result['post_uuid'],
+                    $result['author_uuid']
+                );
+        }
+        if(count($allLikes) == 0) {
+            return null;
+        }
+        return $allLikes;
     }
 
     /**
      * @throws PostNotFoundException
+     * @throws InvalidArgumentException
      */
-    public function save(Like $like): void
+    public function save(Like $newlike): void
     {
+        $likes = $this->getByPostUuid($newlike->postUuid());
+        if($likes !== null) {
+            foreach ($likes as $like) {
+                if((string)$like->userUuid() == $newlike->userUuid()) {
+                    throw new LikeAlreadyExists("Post can not be liked more than once by the same user");
+                }
+            }
+        }
+
         $statement = $this->connection->prepare(
             "INSERT INTO likes (uuid, post_uuid, author_uuid)
               VALUES (:uuid, :post_uuid, :author_uuid)"
         );
 
         $statement->execute([
-            ":uuid" => $like->uuid(),
-            ":post_uuid" => $like->postUuid(),
-            ":author_uuid" => $like->userUuid()
+            ":uuid" => $newlike->uuid(),
+            ":post_uuid" => $newlike->postUuid(),
+            ":author_uuid" => $newlike->userUuid()
         ]);
 
     }

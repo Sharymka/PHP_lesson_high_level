@@ -52,13 +52,13 @@ class SqlitePostRepository implements PostsRepositoryInterface
             'SELECT * FROM posts WHERE uuid = :uuid'
         );
         $statement->execute([
-            'uuid'=> (string) $uuid,
+            ':uuid'=> (string) $uuid,
         ]);
 
         $result = $statement->fetch(PDO::FETCH_ASSOC);
 
         if(!$result) {
-            throw new PostNotFoundException("Post not found Post: uuid [$uuid]");
+            throw new PostNotFoundException("Post not found: uuid [$uuid]");
         }
 
             $userRepository = new SqliteUserRepository($this->connection);

@@ -44,14 +44,7 @@ class CreateLike implements ActionInterface
 
         try{
              $post = $this->postsRepository->get(new UUID($postUuid));
-             if(count($post->getLikes()) !== 0) {
-                 foreach ($post->getLikes() as $hostOfLike) {
-                     if($hostOfLike == (string)$post->user()->uuid()) {
-                         throw new LikeAlreadyExists("User can not like post more than once");
-                     }
-                 }
-             }
-        } catch(PostNotFoundException|UserNotFoundException|LikeAlreadyExists $e) {
+        } catch(PostNotFoundException|UserNotFoundException $e) {
             return new ErrorResponse($e->getMessage());
         }
         try{
@@ -67,13 +60,15 @@ class CreateLike implements ActionInterface
                 $postUuid,
                 $userUuid);
 
-            $this->likesRepository->save($like);
-
-        $post->saveLike($like);
+            try{
+                $this->likesRepository->save($like);
+            }catch (LikeAlreadyExists $e) {
+                return new ErrorResponse($e->getMessage());
+            }
 
        return new SuccessfulResponse([
            'save' => 'done',
-           'uuid' => $like->uuid()
+           'uuid' =>(string)$like->uuid()
        ]);
     }
 }
