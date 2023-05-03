@@ -54,9 +54,9 @@ class SqliteCommentsRepositoryTest extends TestCase
         ));
     }
 
-    function testItGetsCommentByUuid() {
-
-    }
+//    function testItGetsCommentByUuid() {
+//
+//    }
 
     function testItTrowsAnExceptionWhenCommentNotFound() {
         $connectionStub = $this->createStub(\PDO::class);

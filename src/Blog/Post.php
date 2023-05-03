@@ -2,14 +2,14 @@
 
 namespace Geekbrains\LevelTwo\Blog;
 
-use Geekbrains\LevelTwo\Person\Person;
-
 class Post
 {
     private UUID $uuid;
     private User $user;
     private string $title;
     private string $text;
+    private array $likes;
+
 
 
     /**
@@ -23,6 +23,7 @@ class Post
         $this->user = $user;
         $this->title = $title;
         $this->text = $text;
+        $this->likes = [];
 
     }
 
@@ -30,6 +31,19 @@ class Post
     {
         return   $this->title . ' : ' .' ' . $this->user->name() . 'пишет: ' . $this->text .PHP_EOL;
     }
+
+    /**
+     * @return array
+     */
+    public function getLikes(): array
+    {
+        return $this->likes;
+    }
+
+    public function saveLike(Like $like):void {
+        $this->likes[] = $like->userUuid();
+    }
+
 
     /**
      * @return User

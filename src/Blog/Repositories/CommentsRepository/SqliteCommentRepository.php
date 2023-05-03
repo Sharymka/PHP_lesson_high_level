@@ -40,7 +40,7 @@ class SqliteCommentRepository
             'SELECT * FROM comments WHERE uuid = :uuid'
         );
         $statement->execute([
-            'uuid'=> (string) $uuid,
+            ':uuid'=> (string) $uuid,
         ]);
 
         $result = $statement->fetch(PDO::FETCH_ASSOC);

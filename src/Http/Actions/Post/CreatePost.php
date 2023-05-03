@@ -13,8 +13,8 @@ use Geekbrains\LevelTwo\Http\Actions\ActionInterface;
 use Geekbrains\LevelTwo\Http\Request;
 use Geekbrains\LevelTwo\Http\Response;
 use Geekbrains\LevelTwo\Http\ErrorResponse;
-use Geekbrains\LevelTwo\Blog\User;
-use Geekbrains\LevelTwo\Person\Name;
+//use Geekbrains\LevelTwo\Blog\User;
+//use Geekbrains\LevelTwo\Person\Name;
 use Geekbrains\LevelTwo\Http\SuccessfulResponse;
 
 class CreatePost implements ActionInterface
@@ -59,7 +59,8 @@ class CreatePost implements ActionInterface
         // Возвращаем успешный ответ,
         // содержащий UUID новой статьи
         return new SuccessfulResponse([
-            'uuid' => (string)$newPostUuid,
+            'create' => 'done',
+            'uuid' => (string)$newPostUuid
         ]);
 
     }

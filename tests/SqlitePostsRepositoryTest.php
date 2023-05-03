@@ -64,20 +64,29 @@ class SqlitePostsRepositoryTest extends TestCase
     function testItGetsPostByUuid() {
 
         $connectionStub = $this->createStub(\PDO::class);
-        $statementMock = $this->createMock(\PDOStatement::class);
-        $statementMock->method('fetch')->willReturn([
-            'uuid'=>'f9cdfe1c-1a03-4786-89a4-f4a871696928',
+        $statementMockPost = $this->createMock(\PDOStatement::class);
+        $statementMockUser = $this->createMock(\PDOStatement::class);
+
+        $statementMockPost->method('fetch')->willReturn([
+            'uuid'=>'f9cdfe1c-1a03-4786-89a4-f4a871696222',
             'author_uuid'=>'f9cdfe1c-1a03-4786-89a4-f4a871696928',
             'title'=> 'title',
             'text'=> 'text'
         ]);
 
-        $connectionStub->method('prepare')->willReturn($statementMock);
+        $statementMockUser->method('fetch')->willReturn([
+            'uuid'=>'f9cdfe1c-1a03-4786-89a4-f4a871696928',
+            'first_name' => 'Ivan',
+            'last_name' => 'Petrov',
+            'username'=> 'ivan123'
+        ]);
+
+        $connectionStub->method('prepare')->willReturn($statementMockPost, $statementMockUser);
         $repository = new SqlitePostRepository($connectionStub);
 
         $post = $repository->get(new UUID('f9cdfe1c-1a03-4786-89a4-f4a871696928'));
 
-        $this->assertSame('f9cdfe1c-1a03-4786-89a4-f4a871696928', $post['uuid']);
+        $this->assertSame('f9cdfe1c-1a03-4786-89a4-f4a871696222', (string)$post->uuid());
     }
 
     function testItTrowsAnExceptionWhenPostNotFound(){

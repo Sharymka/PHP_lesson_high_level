@@ -2,7 +2,11 @@
     "name": "geekbrains/leveltwo",
     "autoload": {
         "psr-4": {
-            "Geekbrains\\LevelTwo\\": "src/",
+            "Geekbrains\\LevelTwo\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
             "Geekbrains\\LevelTwo\\UnitTests\\": "tests/"
         }
     },
@@ -13,19 +17,17 @@
     ],
     "require": {
         "php": "^8.0",
-
         "ext-pdo": "*",
         "symfony/polyfill-uuid": "^1.27",
         "ext-mbstring": "*",
-      "ext-http": "*"
+        "ext-http": "*"
     },
     "require-dev": {
         "fakerphp/faker": "^1.21",
         "phpunit/phpunit": "^10.1"
     },
-
     "scripts": {
         "test": "phpunit tests --testdox --colors"
     }
-
 }
+

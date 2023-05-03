@@ -2,18 +2,20 @@
 
 namespace Geekbrains\LevelTwo\Blog\Repositories\PostRepositories;
 
-use Geekbrains\LevelTwo\Blog\Comment;
-use Geekbrains\LevelTwo\Blog\User;
+//use Geekbrains\LevelTwo\Blog\Comment;
+//use Geekbrains\LevelTwo\Blog\User;
 use Geekbrains\LevelTwo\Blog\Exceptions\CommandException;
 use Geekbrains\LevelTwo\Blog\Exceptions\InvalidArgumentException;
+use Geekbrains\LevelTwo\Blog\Exceptions\PostNotFoundException;
 use Geekbrains\LevelTwo\Blog\Exceptions\UserNotFoundException;
 use Geekbrains\LevelTwo\Blog\Post;
+//use Geekbrains\LevelTwo\Blog\Repositories\UserRepository\SqliteUserRepository;
 use Geekbrains\LevelTwo\Blog\Repositories\UserRepository\SqliteUserRepository;
 use Geekbrains\LevelTwo\Blog\UUID;
 use Geekbrains\LevelTwo\Http\ErrorResponse;
-use Geekbrains\LevelTwo\Person\Name;
+//use Geekbrains\LevelTwo\Person\Name;
 use PDO;
-use PhpParser\Node\Expr\Array_;
+//use PhpParser\Node\Expr\Array_;
 
 class SqlitePostRepository implements PostsRepositoryInterface
 {
@@ -41,11 +43,11 @@ class SqlitePostRepository implements PostsRepositoryInterface
     }
 
     /**
-     * @throws CommandException
      * @throws InvalidArgumentException
      * @throws UserNotFoundException
+     * @throws PostNotFoundException
      */
-    public function get(UUID $uuid): Array {
+    public function get(UUID $uuid): Post {
         $statement = $this->connection->prepare(
             'SELECT * FROM posts WHERE uuid = :uuid'
         );
@@ -56,19 +58,18 @@ class SqlitePostRepository implements PostsRepositoryInterface
         $result = $statement->fetch(PDO::FETCH_ASSOC);
 
         if(!$result) {
-            throw new CommandException("Not found Post with id: $uuid");
+            throw new PostNotFoundException("Post not found Post: uuid [$uuid]");
         }
 
-//        $userRepository = new SqliteUserRepository($this->connection);
-//        $user = $userRepository->get(new UUID($result['author_uuid']));
+            $userRepository = new SqliteUserRepository($this->connection);
+            $user = $userRepository->get(new UUID($result['author_uuid']));
 
-        return $result;
-//        return new Post(
-//            new UUID($result['uuid']),
-//            $user,
-//            $result['title'],
-//            $result['text']
-//        );
+        return new Post(
+            new UUID($result['uuid']),
+            $user,
+            $result['title'],
+            $result['text']
+        );
     }
 
     /**

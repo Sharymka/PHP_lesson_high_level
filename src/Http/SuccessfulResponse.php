@@ -3,7 +3,7 @@
 namespace Geekbrains\LevelTwo\Http;
 
 // Класс успешного ответа
-use Geekbrains\LevelTwo\Http\Response;
+//use Geekbrains\LevelTwo\Http\Response;
 
 class SuccessfulResponse extends Response
 {

@@ -12,7 +12,7 @@ use Geekbrains\LevelTwo\Http\Request;
 use Geekbrains\LevelTwo\Http\Response;
 use Geekbrains\LevelTwo\Http\SuccessfulResponse;
 
-class DeletePost2 implements ActionInterface
+class DeletePostByQuery implements ActionInterface
 {
 
     public function __construct(
