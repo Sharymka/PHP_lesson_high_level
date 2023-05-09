@@ -4,11 +4,11 @@ namespace Geekbrains\LevelTwo\Http\Actions\Likes;
 
 use Geekbrains\LevelTwo\Blog\Exceptions\HttpException;
 use Geekbrains\LevelTwo\Blog\Exceptions\InvalidArgumentException;
-use Geekbrains\LevelTwo\Blog\Exceptions\LikeAlreadyExists;
+use Geekbrains\LevelTwo\Blog\Exceptions\LikeAlreadyExistsException;
 use Geekbrains\LevelTwo\Blog\Exceptions\PostNotFoundException;
 use Geekbrains\LevelTwo\Blog\Exceptions\UserNotFoundException;
 use Geekbrains\LevelTwo\Blog\Like;
-use Geekbrains\LevelTwo\Blog\Repositories\LikesRepository\LikesRepositoryInterface;
+use Geekbrains\LevelTwo\Blog\Repositories\PostLikesRepository\LikesRepositoryInterface;
 use Geekbrains\LevelTwo\Blog\Repositories\PostRepositories\PostsRepositoryInterface;
 use Geekbrains\LevelTwo\Blog\Repositories\UserRepository\UsersRepositoryInterface;
 use Geekbrains\LevelTwo\Blog\UUID;
@@ -18,7 +18,7 @@ use Geekbrains\LevelTwo\Http\Request;
 use Geekbrains\LevelTwo\Http\Response;
 use Geekbrains\LevelTwo\Http\SuccessfulResponse;
 
-class CreateLike implements ActionInterface
+class CreatePostLike implements ActionInterface
 {
 
     public function __construct(
@@ -31,7 +31,7 @@ class CreateLike implements ActionInterface
 
     /**
      * @throws InvalidArgumentException
-     * @throws LikeAlreadyExists
+     * @throws LikeAlreadyExistsException
      */
     public function handle(Request $request): Response
     {
@@ -62,7 +62,7 @@ class CreateLike implements ActionInterface
 
             try{
                 $this->likesRepository->save($like);
-            }catch (LikeAlreadyExists $e) {
+            }catch (LikeAlreadyExistsException $e) {
                 return new ErrorResponse($e->getMessage());
             }
 

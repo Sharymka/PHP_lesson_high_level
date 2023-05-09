@@ -1,8 +1,12 @@
 <?php
 
 use Geekbrains\LevelTwo\Blog\Container\DIContainer;
-use Geekbrains\LevelTwo\Blog\Repositories\LikesRepository\LikesRepositoryInterface;
-use Geekbrains\LevelTwo\Blog\Repositories\LikesRepository\SqliteLikesRepository;
+use Geekbrains\LevelTwo\Blog\Repositories\CommentLikesRepository\CommentLikesRepositoryInterface;
+use Geekbrains\LevelTwo\Blog\Repositories\CommentLikesRepository\SqliteCommentLikesRepository;
+use Geekbrains\LevelTwo\Blog\Repositories\CommentsRepository\CommentsRepositoryInterface;
+use Geekbrains\LevelTwo\Blog\Repositories\CommentsRepository\SqliteCommentRepository;
+use Geekbrains\LevelTwo\Blog\Repositories\PostLikesRepository\LikesRepositoryInterface;
+use Geekbrains\LevelTwo\Blog\Repositories\PostLikesRepository\SqlitePostLikesRepository;
 use Geekbrains\LevelTwo\Blog\Repositories\PostRepositories\PostsRepositoryInterface;
 use Geekbrains\LevelTwo\Blog\Repositories\PostRepositories\SqlitePostRepository;
 use Geekbrains\LevelTwo\Blog\Repositories\UserRepository\SqliteUserRepository;
@@ -31,7 +35,18 @@ $container->bind(
 
 $container->bind(
     LikesRepositoryInterface::class,
-    SqliteLikesRepository::class
+    SqlitePostLikesRepository::class
 );
+
+$container->bind(
+    CommentLikesRepositoryInterface::class,
+    SqliteCommentLikesRepository::class
+);
+
+$container->bind(
+    CommentsRepositoryInterface::class,
+   SqliteCommentRepository::class
+);
+
 // Возвращаем объект контейнера
 return $container;

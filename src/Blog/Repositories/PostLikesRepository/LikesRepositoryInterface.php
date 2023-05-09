@@ -1,6 +1,6 @@
 <?php
 
-namespace Geekbrains\LevelTwo\Blog\Repositories\LikesRepository;
+namespace Geekbrains\LevelTwo\Blog\Repositories\PostLikesRepository;
 
 use Geekbrains\LevelTwo\Blog\Like;
 

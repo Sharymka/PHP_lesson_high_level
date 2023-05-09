@@ -2,7 +2,7 @@
 
 namespace Geekbrains\LevelTwo\Blog\Exceptions;
 
-class LikeAlreadyExists extends AppException
+class LikeAlreadyExistsException extends AppException
 {
 
 }

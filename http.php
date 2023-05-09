@@ -1,6 +1,8 @@
 <?php
 use Geekbrains\LevelTwo\Blog\Exceptions\AppException;
 use Geekbrains\LevelTwo\Blog\Exceptions\NotFoundException;
+use Geekbrains\LevelTwo\Http\Actions\Comment\CreateComment;
+use Geekbrains\LevelTwo\Http\Actions\Likes\CreateCommentLike;
 use Geekbrains\LevelTwo\Http\Actions\Post\CreatePost;
 use Geekbrains\LevelTwo\Http\Actions\Post\DeletePost;
 use Geekbrains\LevelTwo\Http\Actions\Users\CreateUser;
@@ -8,7 +10,7 @@ use Geekbrains\LevelTwo\Http\Actions\Users\FindByUsername;
 use Geekbrains\LevelTwo\Http\ErrorResponse;
 use Geekbrains\LevelTwo\Http\Request;
 use Geekbrains\LevelTwo\Http\Actions\Post\DeletePostByQuery;
-use Geekbrains\LevelTwo\Http\Actions\Likes\CreateLike;
+use Geekbrains\LevelTwo\Http\Actions\Likes\CreatePostLike;
 
 
 $container = require __DIR__ . '/bootstrap.php';
@@ -44,8 +46,10 @@ $routes = [
      // Добавили новый маршрут
         '/users/create' =>  CreateUser::class,
         '/posts/create' => CreatePost::class,
+        '/comments/create' => CreateComment::class,
         '/posts/delete' => DeletePost::class,
-        '/likes/create' => CreateLike::class
+        '/likes/create' => CreatePostLike::class,
+        '/commentLikes/create' => CreateCommentLike::class
     ],
     'DELETE' => [
         '/posts' => DeletePostByQuery::class

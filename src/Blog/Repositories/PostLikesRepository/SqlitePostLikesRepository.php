@@ -1,15 +1,15 @@
 <?php
 
-namespace Geekbrains\LevelTwo\Blog\Repositories\LikesRepository;
+namespace Geekbrains\LevelTwo\Blog\Repositories\PostLikesRepository;
 
 use Geekbrains\LevelTwo\Blog\Exceptions\InvalidArgumentException;
-use Geekbrains\LevelTwo\Blog\Exceptions\LikeAlreadyExists;
+use Geekbrains\LevelTwo\Blog\Exceptions\LikeAlreadyExistsException;
 use Geekbrains\LevelTwo\Blog\Exceptions\PostNotFoundException;
 use Geekbrains\LevelTwo\Blog\Like;
 use Geekbrains\LevelTwo\Blog\UUID;
 use PDO;
 
-class SqliteLikesRepository implements LikesRepositoryInterface
+class SqlitePostLikesRepository implements LikesRepositoryInterface
 {
 
     public function __construct(
@@ -57,7 +57,7 @@ class SqliteLikesRepository implements LikesRepositoryInterface
         if($likes !== null) {
             foreach ($likes as $like) {
                 if((string)$like->userUuid() == $newlike->userUuid()) {
-                    throw new LikeAlreadyExists("Post can not be liked more than once by the same user");
+                    throw new LikeAlreadyExistsException("Post can not be liked more than once by the same user");
                 }
             }
         }
