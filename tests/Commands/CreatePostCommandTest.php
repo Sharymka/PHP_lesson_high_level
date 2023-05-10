@@ -1,6 +1,6 @@
 <?php
 
-namespace Geekbrains\LevelTwo\Commands;
+namespace Geekbrains\LevelTwo\UnitTests\Commands;
 
 use Geekbrains\LevelTwo\Blog\Commands\CreatePostCommand;
 use Geekbrains\LevelTwo\Blog\Exceptions\CommandException;

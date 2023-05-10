@@ -1,12 +1,11 @@
 <?php
 
-namespace Geekbrains\LevelTwo\Commands;
+namespace Geekbrains\LevelTwo\UnitTests\Commands;
 
 use Geekbrains\LevelTwo\Blog\Comment;
-use Geekbrains\LevelTwo\Blog\Exceptions\CommandException;
+use Geekbrains\LevelTwo\Blog\Exceptions\CommentNotFoundException;
 use Geekbrains\LevelTwo\Blog\Post;
 use Geekbrains\LevelTwo\Blog\Repositories\CommentsRepository\SqliteCommentRepository;
-use Geekbrains\LevelTwo\Blog\Repositories\PostRepositories\SqlitePostRepository;
 use Geekbrains\LevelTwo\Blog\User;
 use Geekbrains\LevelTwo\Blog\UUID;
 use Geekbrains\LevelTwo\Person\Name;
@@ -54,10 +53,6 @@ class SqliteCommentsRepositoryTest extends TestCase
         ));
     }
 
-//    function testItGetsCommentByUuid() {
-//
-//    }
-
     function testItTrowsAnExceptionWhenCommentNotFound() {
         $connectionStub = $this->createStub(\PDO::class);
         $statementMock = $this->createMock(\PDOStatement::class);
@@ -71,7 +66,7 @@ class SqliteCommentsRepositoryTest extends TestCase
 
         $statementMock->method('fetch')->willReturn(false);
 
-        $this->expectException(CommandException::class);
+        $this->expectException(CommentNotFoundException::class);
         $this->expectExceptionMessage("Not found Comment with id: f9cdfe1c-1a03-4786-89a4-f4a871696928");
 
         $connectionStub->method('prepare')->willReturn($statementMock);
@@ -79,4 +74,5 @@ class SqliteCommentsRepositoryTest extends TestCase
 
         $repository->get(new UUID('f9cdfe1c-1a03-4786-89a4-f4a871696928'));
     }
+
 }

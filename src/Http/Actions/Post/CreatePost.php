@@ -26,7 +26,7 @@ class CreatePost implements ActionInterface
     {
     }
 
-    public function handle(Request $request): Response
+    public function  handle(Request $request): Response
     {
         // Пытаемся создать UUID пользователя из данных запроса
         try {
@@ -48,9 +48,10 @@ class CreatePost implements ActionInterface
             $post = new Post(
                 $newPostUuid,
                 $user,
-                $request->jsonBodyField('title'),
-                $request->jsonBodyField('text'),
+                $request->jsonBodyField("title"),
+                $result = $request->jsonBodyField("text"),
             );
+
         } catch (HttpException $e) {
             return new ErrorResponse($e->getMessage());
         }
