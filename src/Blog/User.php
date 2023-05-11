@@ -1,5 +1,6 @@
 <?php
 namespace Geekbrains\LevelTwo\Blog;
+
 use Geekbrains\LevelTwo\Person\Name;
 
 class User
