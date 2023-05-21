@@ -10,6 +10,7 @@ use Geekbrains\LevelTwo\Blog\Repositories\UserRepository\SqliteUserRepository;
 use Geekbrains\LevelTwo\Blog\User;
 use Geekbrains\LevelTwo\Blog\UUID;
 use Geekbrains\LevelTwo\Person\Name;
+use Geekbrains\LevelTwo\UnitTests\DummyLogger;
 use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\TestCase;
 
@@ -54,8 +55,9 @@ class CreatePostCommandTest extends TestCase
     {
         $statementMock = $this->createMock(\PDOStatement::class);
         $connectionStub = $this->createStub(\PDO::class);
+        $logger = new DummyLogger();
         $UserRepositoryStub = $this->createStub(SqliteUserRepository::class);
-        $PostRepositoryStub = new SqlitePostRepository($connectionStub);
+        $PostRepositoryStub = new SqlitePostRepository($connectionStub, $logger);
 
         $connectionStub->method('prepare')->willReturn($statementMock);
 

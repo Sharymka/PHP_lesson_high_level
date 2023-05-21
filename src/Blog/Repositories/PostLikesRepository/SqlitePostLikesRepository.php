@@ -4,12 +4,13 @@ namespace Geekbrains\LevelTwo\Blog\Repositories\PostLikesRepository;
 
 use Geekbrains\LevelTwo\Blog\Exceptions\InvalidArgumentException;
 use Geekbrains\LevelTwo\Blog\Exceptions\LikeAlreadyExistsException;
+use Geekbrains\LevelTwo\Blog\Exceptions\PostLikeNotFoundException;
 use Geekbrains\LevelTwo\Blog\Exceptions\PostNotFoundException;
 use Geekbrains\LevelTwo\Blog\Like;
 use Geekbrains\LevelTwo\Blog\UUID;
 use PDO;
 
-class SqlitePostLikesRepository implements LikesRepositoryInterface
+class SqlitePostLikesRepository implements PostLikesRepositoryInterface
 {
 
     public function __construct(
@@ -31,20 +32,38 @@ class SqlitePostLikesRepository implements LikesRepositoryInterface
         $statement->execute([
             ":postUuid" => $postUuid
         ]);
-        $allLikes = [];
 
-        while ($result = $statement->fetch(PDO::FETCH_ASSOC)) {
-            $allLikes[] =
-                new Like(
-                    new UUID($result['uuid']),
-                    $result['post_uuid'],
-                    $result['author_uuid']
-                );
+
+        $result = $statement->fetchAll(PDO::FETCH_ASSOC);
+
+        if(!$result) {
+            throw new PostLikeNotFoundException("Likes not found for Post: uuid[$postUuid]");
         }
-        if(count($allLikes) == 0) {
-            return null;
+        $likes = [];
+
+        foreach ($result as $like) {
+            $likes[] = new Like(
+                new UUID($like['uuid']),
+                $like['post_uuid'],
+                $like['author_uuid']
+            );
         }
-        return $allLikes;
+
+        return $likes;
+
+
+//        while ($result = $statement->fetch(PDO::FETCH_ASSOC)) {
+//            $allLikes[] =
+//                new Like(
+//                    new UUID($result['uuid']),
+//                    $result['post_uuid'],
+//                    $result['author_uuid']
+//                );
+//        }
+//        if(count($allLikes) == 0) {
+//            return null;
+//        }
+//        return $allLikes;
     }
 
     /**
@@ -53,14 +72,14 @@ class SqlitePostLikesRepository implements LikesRepositoryInterface
      */
     public function save(Like $newlike): void
     {
-        $likes = $this->getByPostUuid($newlike->postUuid());
-        if($likes !== null) {
-            foreach ($likes as $like) {
-                if((string)$like->userUuid() == $newlike->userUuid()) {
-                    throw new LikeAlreadyExistsException("Post can not be liked more than once by the same user");
-                }
-            }
-        }
+//        $likes = $this->getByPostUuid($newlike->postUuid());
+//        if($likes !== null) {
+//            foreach ($likes as $like) {
+//                if((string)$like->userUuid() == $newlike->userUuid()) {
+//                    throw new LikeAlreadyExistsException();
+//                }
+//            }
+//        }
 
         $statement = $this->connection->prepare(
             "INSERT INTO likes (uuid, post_uuid, author_uuid)
@@ -73,5 +92,23 @@ class SqlitePostLikesRepository implements LikesRepositoryInterface
             ":author_uuid" => $newlike->userUuid()
         ]);
 
+    }
+
+    /**
+     * @throws LikeAlreadyExistsException
+     */
+    public function checkUserLikeForPostExists($userUuid, $postUuid) {
+        $statement = $this->connection->prepare('SELECT * FROM likes WHERE post_uuid = :post_uuid AND author_uuid = :author_uuid');
+
+        $statement->execute([
+            ":post_uuid" => $postUuid,
+            ":author_uuid" => $userUuid
+        ]);
+
+        $result = $statement->fetch();
+
+        if($result) {
+            throw new  LikeAlreadyExistsException("Post can not be liked more than once by the same user");
+        }
     }
 }

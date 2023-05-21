@@ -20,7 +20,9 @@
         "ext-pdo": "*",
         "symfony/polyfill-uuid": "^1.27",
         "ext-mbstring": "*",
-        "ext-http": "*"
+        "monolog/monolog": "^3.3",
+        "ext-http": "*",
+        "vlucas/phpdotenv": "^5.5"
     },
     "require-dev": {
         "fakerphp/faker": "^1.21",
@@ -30,4 +32,3 @@
         "test": "phpunit tests --testdox --colors"
     }
 }
-

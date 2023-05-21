@@ -16,6 +16,7 @@ use Geekbrains\LevelTwo\Http\ErrorResponse;
 use Geekbrains\LevelTwo\Http\Request;
 use Geekbrains\LevelTwo\Http\Response;
 use Geekbrains\LevelTwo\Http\SuccessfulResponse;
+use Psr\Log\LoggerInterface;
 
 class CreateCommentLike implements ActionInterface
 {
@@ -23,7 +24,8 @@ class CreateCommentLike implements ActionInterface
     public function __construct(
             private UsersRepositoryInterface $usersRepository,
             private CommentsRepositoryInterface $commentsRepository,
-            private CommentLikesRepositoryInterface $commentLikesRepository
+            private CommentLikesRepositoryInterface $commentLikesRepository,
+            private LoggerInterface $logger
 
     )
     {
@@ -41,12 +43,14 @@ class CreateCommentLike implements ActionInterface
         try{
             $comment = $this->commentsRepository->get( new UUID($comment_uuid));
         }catch (CommentNotFoundException $e){
+            $this->logger->warning("Comment not found: uuid[$comment_uuid]");
             return new ErrorResponse($e->getMessage());
         }
 
         try{
             $user = $this->usersRepository->get( new UUID($author_uuid));
         }catch (UserNotFoundException $e){
+            $this->logger->warning("User not found: uuid[$author_uuid]");
             return new ErrorResponse($e->getMessage());
         }
 
@@ -59,6 +63,9 @@ class CreateCommentLike implements ActionInterface
                 $author_uuid
             )
         );
+        $this->logger->info("User created: uuid[$newUuid]");
+
+
         return new SuccessfulResponse([
             'create' => 'done',
             'uuid' =>(string)$newUuid

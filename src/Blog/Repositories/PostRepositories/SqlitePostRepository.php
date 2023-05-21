@@ -15,13 +15,17 @@ use Geekbrains\LevelTwo\Blog\UUID;
 use Geekbrains\LevelTwo\Http\ErrorResponse;
 //use Geekbrains\LevelTwo\Person\Name;
 use PDO;
+use Psr\Log\LoggerInterface;
+
 //use PhpParser\Node\Expr\Array_;
 
 class SqlitePostRepository implements PostsRepositoryInterface
 {
-    private PDO $connection;
-    public function __construct(PDO $connection) {
-        $this->connection = $connection;
+    public function __construct(
+        private PDO $connection,
+        private LoggerInterface $logger
+    ) {
+
     }
 
 
@@ -39,7 +43,6 @@ class SqlitePostRepository implements PostsRepositoryInterface
             ':text' => $post->text(),
 
         ]);
-
     }
 
     /**

@@ -2,54 +2,49 @@
 
 namespace Geekbrains\LevelTwo\Http\Actions\Post;
 
+use Geekbrains\LevelTwo\Blog\Exceptions\AuthException;
 use Geekbrains\LevelTwo\Blog\Exceptions\HttpException;
-use Geekbrains\LevelTwo\Blog\Exceptions\InvalidArgumentException;
-use Geekbrains\LevelTwo\Blog\Exceptions\UserNotFoundException;
 use Geekbrains\LevelTwo\Blog\Post;
 use Geekbrains\LevelTwo\Blog\Repositories\PostRepositories\PostsRepositoryInterface;
-use Geekbrains\LevelTwo\Blog\Repositories\UserRepository\UsersRepositoryInterface;
 use Geekbrains\LevelTwo\Blog\UUID;
 use Geekbrains\LevelTwo\Http\Actions\ActionInterface;
+use Geekbrains\LevelTwo\Http\Auth\IdentificationInterface;
 use Geekbrains\LevelTwo\Http\Request;
 use Geekbrains\LevelTwo\Http\Response;
 use Geekbrains\LevelTwo\Http\ErrorResponse;
-//use Geekbrains\LevelTwo\Blog\User;
-//use Geekbrains\LevelTwo\Person\Name;
 use Geekbrains\LevelTwo\Http\SuccessfulResponse;
+use Psr\Log\LoggerInterface;
 
 class CreatePost implements ActionInterface
 {
     public function __construct(
         private PostsRepositoryInterface $postsRepository,
-        private UsersRepositoryInterface $usersRepository,
+        private IdentificationInterface $identification,
+        private LoggerInterface $logger
+
     )
     {
     }
 
     public function  handle(Request $request): Response
     {
-        // Пытаемся создать UUID пользователя из данных запроса
         try {
-            $authorUuid = new UUID($request->jsonBodyField("author_uuid"));
-        } catch (HttpException|InvalidArgumentException $e) {
+            $author = $this->identification->user($request);
+        }catch(AuthException $e) {
             return new ErrorResponse($e->getMessage());
         }
-        // Пытаемся найти пользователя в реeпозитории
-        try {
-            $user = $this->usersRepository->get($authorUuid);
-        } catch (UserNotFoundException $e) {
-            return new ErrorResponse($e->getMessage());
-        }
-        // Генерируем UUID для новой статьи
+
+
         $newPostUuid = UUID::random();
+
         try {
         // Пытаемся создать объект статьи
         // из данных запроса
             $post = new Post(
                 $newPostUuid,
-                $user,
+                $author,
                 $request->jsonBodyField("title"),
-                $result = $request->jsonBodyField("text"),
+                $request->jsonBodyField("text"),
             );
 
         } catch (HttpException $e) {
@@ -57,6 +52,8 @@ class CreatePost implements ActionInterface
         }
         // Сохраняем новую статью в репозитории
         $this->postsRepository->save($post);
+
+        $this->logger->info("Post created: $newPostUuid");
         // Возвращаем успешный ответ,
         // содержащий UUID новой статьи
         return new SuccessfulResponse([

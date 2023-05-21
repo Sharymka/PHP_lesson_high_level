@@ -15,6 +15,7 @@ use Geekbrains\LevelTwo\Http\ErrorResponse;
 use Geekbrains\LevelTwo\Http\Request;
 use Geekbrains\LevelTwo\Http\Response;
 use Geekbrains\LevelTwo\Http\SuccessfulResponse;
+use Psr\Log\LoggerInterface;
 
 class CreateComment implements ActionInterface
 {
@@ -22,7 +23,8 @@ class CreateComment implements ActionInterface
     public function __construct(
         private UsersRepositoryInterface $usersRepository,
         private PostsRepositoryInterface $postsRepository,
-        private CommentsRepositoryInterface $commentsRepository
+        private CommentsRepositoryInterface $commentsRepository,
+        private LoggerInterface $logger
     )
     {
     }
@@ -39,12 +41,14 @@ class CreateComment implements ActionInterface
         try{
             $post = $this->postsRepository->get(new UUID($postUuid));
         }catch(PostNotFoundException $e) {
+            $this->logger->warning("Post not found: uuid[$postUuid]");
             return new ErrorResponse($e->getMessage());
         }
 
         try{
             $user = $this->usersRepository->get(new UUID($userUuid));
         }catch(UserNotFoundException $e) {
+            $this->logger->warning("User not found: uuid[$userUuid]");
             return new ErrorResponse($e->getMessage());
         }
 
@@ -59,6 +63,8 @@ class CreateComment implements ActionInterface
                         $request->jsonBodyField('text')
                     )
                 );
+
+                $this->logger->info("Comment created: uuid[$newUuid]");
 
 
             return new SuccessfulResponse([

@@ -1,6 +1,6 @@
 <?php
 
-namespace Geekbrains\LevelTwo\Actions;
+namespace Geekbrains\LevelTwo\UnitTests\Actions;
 
 use Geekbrains\LevelTwo\Blog\Exceptions\UserNotFoundException;
 use Geekbrains\LevelTwo\Blog\Repositories\UserRepository\UsersRepositoryInterface;

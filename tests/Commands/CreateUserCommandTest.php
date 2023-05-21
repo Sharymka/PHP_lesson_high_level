@@ -11,6 +11,9 @@ use Geekbrains\LevelTwo\Blog\Exceptions\UserNotFoundException;
 use Geekbrains\LevelTwo\Blog\Repositories\UserRepository\UsersRepositoryInterface;
 use Geekbrains\LevelTwo\Blog\User;
 use Geekbrains\LevelTwo\Blog\UUID;
+use Geekbrains\LevelTwo\Person\Name;
+use Geekbrains\LevelTwo\UnitTests\DummyLogger;
+use PhpParser\Node\Expr\Array_;
 use PHPUnit\Framework\TestCase;
 
 class CreateUserCommandTest extends TestCase
@@ -24,20 +27,33 @@ class CreateUserCommandTest extends TestCase
     {
     // Создаём объект команды
     // У команды одна зависимость - UsersRepositoryInterface
-        $command = new CreateUserCommand(new DummyUsersRepository());
+        $command = new CreateUserCommand($this->makeUsersRepository([
+            new User(
+                new UUID("86a34c9e-623d-4058-ae0e-a354aafe9e66"),
+                new Name('Ivan', 'Petrov'),
+                'Ivan'
+            )
+        ]),
+        new DummyLogger());
     // Описываем тип ожидаемого исключения
         $this->expectException(CommandException::class);
+        $this->expectExceptionMessage("User already exists: Ivan");
         // и его сообщение
-        $this->expectExceptionMessage('User already exists: Ivan');
     // Запускаем команду с аргументами
         $command->handle(new Arguments(['username' => 'Ivan']));
     }
 
 
 
-    private function makeUsersRepository(): UsersRepositoryInterface
+    private function makeUsersRepository($users): UsersRepositoryInterface
     {
-        return new class implements UsersRepositoryInterface {
+        return new class($users) implements UsersRepositoryInterface {
+            public function __construct(
+                private array $users
+            )
+            {
+            }
+
             public function save(User $user): void
             {
             }
@@ -49,6 +65,11 @@ class CreateUserCommandTest extends TestCase
 
             public function getByUsername(string $username): User
             {
+                foreach ($this->users as $user) {
+                    if($user->username() == $username) {
+                        return $user;
+                    }
+                }
                 throw new UserNotFoundException("Not found");
             }
         };
@@ -58,7 +79,7 @@ class CreateUserCommandTest extends TestCase
         public function testItRequiresLastName(): void
     {
 // Передаём в конструктор команды объект, возвращаемый нашей функцией
-        $command = new CreateUserCommand($this->makeUsersRepository());
+        $command = new CreateUserCommand($this->makeUsersRepository([]), new DummyLogger());
         $this->expectException(ArgumentsException::class);
         $this->expectExceptionMessage('No such argument: last_name');
         $command->handle(new Arguments([
@@ -76,7 +97,7 @@ class CreateUserCommandTest extends TestCase
     public function testItRequiresFirstName(): void
     {
 // Вызываем ту же функцию
-        $command = new CreateUserCommand($this->makeUsersRepository());
+        $command = new CreateUserCommand($this->makeUsersRepository([]), new DummyLogger());
         $this->expectException(ArgumentsException::class);
         $this->expectExceptionMessage('No such argument: first_name');
         $command->handle(new Arguments(['username' => 'Ivan']));
@@ -116,7 +137,7 @@ class CreateUserCommandTest extends TestCase
             }
         };
         // Передаём наш мок в команду
-        $command = new CreateUserCommand($usersRepository);
+        $command = new CreateUserCommand($usersRepository, new DummyLogger());
         // Запускаем команду
         $command->handle(new Arguments([
             'username' => 'Ivan',

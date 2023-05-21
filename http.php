@@ -11,6 +11,7 @@ use Geekbrains\LevelTwo\Http\ErrorResponse;
 use Geekbrains\LevelTwo\Http\Request;
 use Geekbrains\LevelTwo\Http\Actions\Post\DeletePostByQuery;
 use Geekbrains\LevelTwo\Http\Actions\Likes\CreatePostLike;
+use Psr\Log\LoggerInterface;
 
 
 $container = require __DIR__ . '/bootstrap.php';
@@ -21,15 +22,19 @@ $request = new Request(
     file_get_contents('php://input'),
 );
 
+$logger = $container->get(LoggerInterface::class);
+
 try {
     $path = $request->path();
-} catch (HttpException) {
+} catch (HttpException $e) {
+    $logger->warning($e->getMessage());
     (new ErrorResponse)->send();
     return;
 }
 try {
     $method = $request->method();
-} catch (HttpException) {
+} catch (HttpException $e) {
+    $logger->warning($e->getMessage());
     (new ErrorResponse)->send();
     return;
 }
@@ -48,7 +53,7 @@ $routes = [
         '/posts/create' => CreatePost::class,
         '/comments/create' => CreateComment::class,
         '/posts/delete' => DeletePost::class,
-        '/likes/create' => CreatePostLike::class,
+        '/postLikes/create' => CreatePostLike::class,
         '/commentLikes/create' => CreateCommentLike::class
     ],
     'DELETE' => [
@@ -56,33 +61,30 @@ $routes = [
     ]
 ];
 
-
-if (!array_key_exists($method, $routes)) {
-    (new ErrorResponse("Method not found: $method $path"))->send();
+if (!array_key_exists($method, $routes)
+    || !array_key_exists($path, $routes[$method])) {
+// Логируем сообщение с уровнем NOTICE
+    $message = "Route not found: $method $path";
+    $logger->notice($message);
+    (new ErrorResponse($message))->send();
     return;
 }
-if (!array_key_exists($path, $routes[$method])) {
-    (new ErrorResponse("Path not found: $method $path"))->send();
-    return;
-}
 
-// Получаем имя класса действия для маршрута
 $actionClassName = $routes[$method][$path];
-// С помощью контейнера
-// создаём объект нужного действия
+
 try {
     $action = $container->get($actionClassName);
-} catch (NotFoundException $e) {
-    (new ErrorResponse($e->getMessage()))->send();
-}
-
-
-try {
     $response = $action->handle($request);
-} catch (AppException $e) {
-    (new ErrorResponse($e->getMessage()))->send();
+} catch (Exception $e) {
+// Логируем сообщение с уровнем ERROR
+    $logger->error($e->getMessage(), ['exception' => $e]);
+// Больше не отправляем пользователю
+// конкретное сообщение об ошибке,
+// а только логируем его
+    (new ErrorResponse)->send();
+    return;
 }
-    $response->send();
 
+$response->send();
 
 

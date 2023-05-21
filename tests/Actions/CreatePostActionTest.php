@@ -11,9 +11,12 @@ use Geekbrains\LevelTwo\Blog\Repositories\UserRepository\UsersRepositoryInterfac
 use Geekbrains\LevelTwo\Blog\User;
 use Geekbrains\LevelTwo\Blog\UUID;
 use Geekbrains\LevelTwo\Http\Actions\Post\CreatePost;
+use Geekbrains\LevelTwo\Http\Auth\JsonBodyUuidIdentification;
 use Geekbrains\LevelTwo\Http\ErrorResponse;
 use Geekbrains\LevelTwo\Http\Request;
 use Geekbrains\LevelTwo\Person\Name;
+use Geekbrains\LevelTwo\UnitTests\DummyLogger;
+use PHPUnit\Event\Code\Throwable;
 use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\TestCase;
 
@@ -158,8 +161,9 @@ class CreatePostActionTest extends TestCase
     function testItReturnsErrorIfUserNotFoundByUuid() {
 
         $postRepository = $this->createStub(SqlitePostRepository::class);
-        $userRepository = $this->userRepository([]);
-        $createPost = new CreatePost($postRepository, $userRepository);
+        $identification = new JsonBodyUuidIdentification($this->userRepository([]));
+
+        $createPost = new CreatePost($postRepository, $identification, new DummyLogger());
         $request = new Request([],[],'{"author_uuid":"86a34c9e-623d-4058-ae0e-a354aafe9e66"}');
 
         $response = $createPost->handle($request);
@@ -175,7 +179,7 @@ class CreatePostActionTest extends TestCase
     public function testItReturnsErrorIfRequestDoesNotContainEnoughDataForCreatePost(): void {
 
         $postRepository = $this->createStub(SqlitePostRepository::class);
-        $userRepository = $this->userRepository([
+        $identification = new JsonBodyUuidIdentification($this->userRepository([
             new User(
                 new UUID('c170cafd-4f55-4658-80ce-bedc0b620a8d'),
                 new Name('Nikolay', 'Nikitin'),
@@ -186,8 +190,8 @@ class CreatePostActionTest extends TestCase
                 new Name('Ivan', 'Nikitin'),
                 'ivan',
             ),
-        ]);
-        $createPost = new CreatePost($postRepository, $userRepository);
+        ]));
+        $createPost = new CreatePost($postRepository, $identification, new DummyLogger());
         $request = new Request([], [], '{"author_uuid":"c170cafd-4f55-4658-80ce-bedc0b620a8d","title":"title","text":""}');
 
         $response = $createPost->handle($request);

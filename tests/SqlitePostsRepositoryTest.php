@@ -39,7 +39,7 @@ class SqlitePostsRepositoryTest extends TestCase
 
         $connectionStub->method('prepare')->willReturn($statementMock);
 
-        $repository = new SqlitePostRepository($connectionStub);
+        $repository = new SqlitePostRepository($connectionStub, new DummyLogger());
         $user = new User(
             new UUID('e15f6930-4a94-4f01-9d6c-3466133b3c77'),
             new Name('Svetlana','Ivanova'),
@@ -82,7 +82,7 @@ class SqlitePostsRepositoryTest extends TestCase
         ]);
 
         $connectionStub->method('prepare')->willReturn($statementMockPost, $statementMockUser);
-        $repository = new SqlitePostRepository($connectionStub);
+        $repository = new SqlitePostRepository($connectionStub, new DummyLogger());
 
         $post = $repository->get(new UUID('f9cdfe1c-1a03-4786-89a4-f4a871696928'));
 
@@ -106,7 +106,7 @@ class SqlitePostsRepositoryTest extends TestCase
         $this->expectExceptionMessage("Post not found: uuid [f9cdfe1c-1a03-4786-89a4-f4a871696928]");
 
         $connectionStub->method('prepare')->willReturn($statementMock);
-        $repository = new SqlitePostRepository($connectionStub);
+        $repository = new SqlitePostRepository($connectionStub, new DummyLogger());
 
         $repository->get(new UUID('f9cdfe1c-1a03-4786-89a4-f4a871696928'));
 
