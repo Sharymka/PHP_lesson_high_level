@@ -9,11 +9,14 @@ use Geekbrains\LevelTwo\Blog\Repositories\UserRepository\UsersRepositoryInterfac
 use Geekbrains\LevelTwo\Blog\User;
 use Geekbrains\LevelTwo\Blog\UUID;
 use Geekbrains\LevelTwo\Person\Name;
+use Psr\Log\LoggerInterface;
 
 class CreateUserCommand
 {
     public function __construct(
-        private UsersRepositoryInterface $usersRepository
+        private UsersRepositoryInterface $usersRepository,
+        private LoggerInterface $logger
+
     ) {
         }
 // Вместо массива принимаем объект типа Arguments
@@ -24,15 +27,21 @@ class CreateUserCommand
      */
     public function handle(Arguments $arguments): void
     {
+        $this->logger->info("Create user command started");
+
         $username = $arguments->get('username');
         if ($this->userExists($username)) {
+            $this->logger->warning("User already exists: $username");
             throw new CommandException("User already exists: $username");
         }
+
+        $uuid = UUID::random();
         $this->usersRepository->save(new User(
-            UUID::random(),
+            $uuid,
             new Name($arguments->get('first_name'), $arguments->get('last_name')),
             $username
         ));
+        $this->logger->info("User created: $uuid");
     }
     private function userExists(string $username): bool
     {

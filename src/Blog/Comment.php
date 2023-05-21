@@ -5,17 +5,17 @@ namespace Geekbrains\LevelTwo\Blog;
 
 class Comment
 {
-    private string $uuid;
+    private UUID $uuid;
     private User $user;
     private Post $post;
     private string $text;
 
     /**
-     * @param string $uuid
+     * @param UUID $uuid
      * @param User $user
      * @param Post $post
      */
-    public function __construct(string $uuid, Post $post, User $user, string $text)
+    public function __construct(UUID $uuid, Post $post, User $user, string $text)
     {
         $this->uuid = $uuid;
         $this->user = $user;
@@ -48,7 +48,7 @@ class Comment
     /**
      * @return int
      */
-    public function uuid(): string
+    public function uuid(): UUID
     {
         return $this->uuid;
     }
