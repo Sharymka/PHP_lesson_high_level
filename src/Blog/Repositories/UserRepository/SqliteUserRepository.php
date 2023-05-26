@@ -21,8 +21,8 @@ class SqliteUserRepository implements UsersRepositoryInterface
     public function save(User $user): void{
 
         $statement = $this->connection->prepare(
-            'INSERT INTO users (uuid, username, first_name, last_name)
-                VALUES (:uuid, :username, :first_name, :last_name)'
+            'INSERT INTO users (uuid, username, password, first_name, last_name)
+                VALUES (:uuid, :username, :password, :first_name, :last_name)'
         );
 // Выполняем запрос с конкретными значениями
         $statement->execute([
@@ -30,6 +30,7 @@ class SqliteUserRepository implements UsersRepositoryInterface
             ':username' => $user->username(),
             ':first_name' => $user->name()->getFirstName(),
             ':last_name' => $user->name()->getLastName(),
+            ':password' => $user->getPassword(),
 
         ]);
 
@@ -58,7 +59,8 @@ class SqliteUserRepository implements UsersRepositoryInterface
         return new User(
             new UUID($result['uuid']),
             new Name($result['first_name'], $result['last_name'] ),
-            $result['username']
+            $result['username'],
+            $result['password']
         );
     }
 
@@ -83,15 +85,8 @@ class SqliteUserRepository implements UsersRepositoryInterface
        return new User(
             new UUID($result['uuid']),
             new Name($result['first_name'], $result['last_name'] ),
-            $result['username']
+            $result['username'],
+            $result['password']
         );
     }
-
-//    private function getUser(?Array $result): User {
-//        return new User(
-//            new UUID($result['uuid']),
-//            new Name($result['first_name'], $result['last_name'] ),
-//            $result['username']
-//        );
-//    }
 }

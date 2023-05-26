@@ -43,7 +43,8 @@ class SqlitePostsRepositoryTest extends TestCase
         $user = new User(
             new UUID('e15f6930-4a94-4f01-9d6c-3466133b3c77'),
             new Name('Svetlana','Ivanova'),
-            'sveta123'
+            'sveta123',
+            '123'
         );
 
         $repository->save(
@@ -71,14 +72,15 @@ class SqlitePostsRepositoryTest extends TestCase
             'uuid'=>'f9cdfe1c-1a03-4786-89a4-f4a871696222',
             'author_uuid'=>'f9cdfe1c-1a03-4786-89a4-f4a871696928',
             'title'=> 'title',
-            'text'=> 'text'
+            'text'=> 'text',
         ]);
 
         $statementMockUser->method('fetch')->willReturn([
             'uuid'=>'f9cdfe1c-1a03-4786-89a4-f4a871696928',
             'first_name' => 'Ivan',
             'last_name' => 'Petrov',
-            'username'=> 'ivan123'
+            'username'=> 'ivan123',
+            'password' => '123'
         ]);
 
         $connectionStub->method('prepare')->willReturn($statementMockPost, $statementMockUser);

@@ -184,11 +184,13 @@ class CreatePostActionTest extends TestCase
                 new UUID('c170cafd-4f55-4658-80ce-bedc0b620a8d'),
                 new Name('Nikolay', 'Nikitin'),
                 'koliy',
+                '123'
             ),
             new User(
                 new UUID('c170cafd-4f55-4658-80ce-bedc0b620a55'),
                 new Name('Ivan', 'Nikitin'),
                 'ivan',
+                '123'
             ),
         ]));
         $createPost = new CreatePost($postRepository, $identification, new DummyLogger());

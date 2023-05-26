@@ -2,6 +2,7 @@
 
 namespace Geekbrains\LevelTwo\Http\Actions\Likes;
 
+use Geekbrains\LevelTwo\Blog\Exceptions\AuthException;
 use Geekbrains\LevelTwo\Blog\Exceptions\HttpException;
 use Geekbrains\LevelTwo\Blog\Exceptions\InvalidArgumentException;
 use Geekbrains\LevelTwo\Blog\Exceptions\LikeAlreadyExistsException;
@@ -14,6 +15,7 @@ use Geekbrains\LevelTwo\Blog\Repositories\PostRepositories\PostsRepositoryInterf
 use Geekbrains\LevelTwo\Blog\Repositories\UserRepository\UsersRepositoryInterface;
 use Geekbrains\LevelTwo\Blog\UUID;
 use Geekbrains\LevelTwo\Http\Actions\ActionInterface;
+use Geekbrains\LevelTwo\Http\Auth\TokenAuthenticationInterface;
 use Geekbrains\LevelTwo\Http\ErrorResponse;
 use Geekbrains\LevelTwo\Http\Request;
 use Geekbrains\LevelTwo\Http\Response;
@@ -25,8 +27,8 @@ class CreatePostLike implements ActionInterface
 
     public function __construct(
         private PostsRepositoryInterface $postsRepository,
-        private UsersRepositoryInterface $usersRepository,
         private PostLikesRepositoryInterface $postLikesRepository,
+        private TokenAuthenticationInterface $authentication,
         private LoggerInterface $logger
     )
     {
@@ -38,9 +40,15 @@ class CreatePostLike implements ActionInterface
      */
     public function handle(Request $request): Response
     {
+
+        try {
+           $user = $this->authentication->user($request);
+        }catch(AuthException|UserNotFoundException $e) {
+            return new ErrorResponse($e->getMessage());
+        }
+
         try{
             $postUuid = $request->jsonBodyField('post_uuid');
-            $userUuid = $request->jsonBodyField('author_uuid');
         }catch(HttpException $e) {
             return new ErrorResponse($e->getMessage());
         }
@@ -51,16 +59,16 @@ class CreatePostLike implements ActionInterface
             $this->logger->warning("Post not found: uuid[$postUuid]");
             return new ErrorResponse($e->getMessage());
         }
-        try{
-            $user = $this->usersRepository->get(new UUID($userUuid));
-        } catch(UserNotFoundException $e) {
-            $this->logger->warning("User not found: uuid[$userUuid]");
-            return new ErrorResponse($e->getMessage());
-        }
+//        try{
+//            $user = $this->usersRepository->get(new UUID($userUuid));
+//        } catch(UserNotFoundException $e) {
+//            $this->logger->warning("User not found: uuid[$userUuid]");
+//            return new ErrorResponse($e->getMessage());
+//        }
 
         try{
-            $this->postLikesRepository->checkUserLikeForPostExists($userUuid, $postUuid );
-        } catch(PostLikeNotFoundException $e) {
+            $this->postLikesRepository->checkUserLikeForPostExists($user->uuid(), $postUuid );
+        } catch(LikeAlreadyExistsException $e) {
             return new ErrorResponse($e->getMessage());
         }
 
@@ -69,13 +77,10 @@ class CreatePostLike implements ActionInterface
             $like = new Like (
                 $likeUuid,
                 $postUuid,
-                $userUuid);
+                $user->uuid());
 
-            try{
                 $this->postLikesRepository->save($like);
-            }catch (LikeAlreadyExistsException $e) {
-                return new ErrorResponse($e->getMessage());
-            }
+
 
         $this->logger->info("PostLike created: uuid[$likeUuid]");
 

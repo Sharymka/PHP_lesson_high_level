@@ -101,8 +101,8 @@ class SqlitePostLikesRepository implements PostLikesRepositoryInterface
         $statement = $this->connection->prepare('SELECT * FROM likes WHERE post_uuid = :post_uuid AND author_uuid = :author_uuid');
 
         $statement->execute([
-            ":post_uuid" => $postUuid,
-            ":author_uuid" => $userUuid
+            ":post_uuid" => (string)$postUuid,
+            ":author_uuid" => (string)$userUuid
         ]);
 
         $result = $statement->fetch();

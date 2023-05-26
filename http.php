@@ -7,6 +7,8 @@ use Geekbrains\LevelTwo\Http\Actions\Post\CreatePost;
 use Geekbrains\LevelTwo\Http\Actions\Post\DeletePost;
 use Geekbrains\LevelTwo\Http\Actions\Users\CreateUser;
 use Geekbrains\LevelTwo\Http\Actions\Users\FindByUsername;
+use Geekbrains\LevelTwo\Http\Auth\LogIn;
+use Geekbrains\LevelTwo\Http\Auth\LogOut;
 use Geekbrains\LevelTwo\Http\ErrorResponse;
 use Geekbrains\LevelTwo\Http\Request;
 use Geekbrains\LevelTwo\Http\Actions\Post\DeletePostByQuery;
@@ -54,7 +56,9 @@ $routes = [
         '/comments/create' => CreateComment::class,
         '/posts/delete' => DeletePost::class,
         '/postLikes/create' => CreatePostLike::class,
-        '/commentLikes/create' => CreateCommentLike::class
+        '/commentLikes/create' => CreateCommentLike::class,
+        '/login' => LogIn::class,
+        '/logout' => LogOut::class,
     ],
     'DELETE' => [
         '/posts' => DeletePostByQuery::class

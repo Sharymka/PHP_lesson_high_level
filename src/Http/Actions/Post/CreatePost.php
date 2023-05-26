@@ -8,7 +8,9 @@ use Geekbrains\LevelTwo\Blog\Post;
 use Geekbrains\LevelTwo\Blog\Repositories\PostRepositories\PostsRepositoryInterface;
 use Geekbrains\LevelTwo\Blog\UUID;
 use Geekbrains\LevelTwo\Http\Actions\ActionInterface;
+use Geekbrains\LevelTwo\Http\Auth\AuthenticationInterface;
 use Geekbrains\LevelTwo\Http\Auth\IdentificationInterface;
+use Geekbrains\LevelTwo\Http\Auth\TokenAuthenticationInterface;
 use Geekbrains\LevelTwo\Http\Request;
 use Geekbrains\LevelTwo\Http\Response;
 use Geekbrains\LevelTwo\Http\ErrorResponse;
@@ -19,9 +21,8 @@ class CreatePost implements ActionInterface
 {
     public function __construct(
         private PostsRepositoryInterface $postsRepository,
-        private IdentificationInterface $identification,
+        private TokenAuthenticationInterface $authentication,
         private LoggerInterface $logger
-
     )
     {
     }
@@ -29,7 +30,7 @@ class CreatePost implements ActionInterface
     public function  handle(Request $request): Response
     {
         try {
-            $author = $this->identification->user($request);
+            $author = $this->authentication->user($request);
         }catch(AuthException $e) {
             return new ErrorResponse($e->getMessage());
         }

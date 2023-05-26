@@ -1,6 +1,8 @@
 <?php
 
 use Geekbrains\LevelTwo\Blog\Container\DIContainer;
+use Geekbrains\LevelTwo\Blog\Repositories\AuthTokensRepository\AuthTokensRepositoryInterface;
+use Geekbrains\LevelTwo\Blog\Repositories\AuthTokensRepository\SqliteAuthTokensRepository;
 use Geekbrains\LevelTwo\Blog\Repositories\CommentLikesRepository\CommentLikesRepositoryInterface;
 use Geekbrains\LevelTwo\Blog\Repositories\CommentLikesRepository\SqliteCommentLikesRepository;
 use Geekbrains\LevelTwo\Blog\Repositories\CommentsRepository\CommentsRepositoryInterface;
@@ -11,8 +13,13 @@ use Geekbrains\LevelTwo\Blog\Repositories\PostRepositories\PostsRepositoryInterf
 use Geekbrains\LevelTwo\Blog\Repositories\PostRepositories\SqlitePostRepository;
 use Geekbrains\LevelTwo\Blog\Repositories\UserRepository\SqliteUserRepository;
 use Geekbrains\LevelTwo\Blog\Repositories\UserRepository\UsersRepositoryInterface;
+use Geekbrains\LevelTwo\Http\Auth\AuthenticationInterface;
+use Geekbrains\LevelTwo\Http\Auth\BearerTokenAuthentication;
 use Geekbrains\LevelTwo\Http\Auth\IdentificationInterface;
 use Geekbrains\LevelTwo\Http\Auth\JsonBodyUuidIdentification;
+use Geekbrains\LevelTwo\Http\Auth\PasswordAuthentication;
+use Geekbrains\LevelTwo\Http\Auth\PasswordAuthenticationInterface;
+use Geekbrains\LevelTwo\Http\Auth\TokenAuthenticationInterface;
 use Monolog\Handler\StreamHandler;
 use Monolog\Logger;
 use Psr\Log\LoggerInterface;
@@ -88,9 +95,29 @@ $container->bind(LoggerInterface::class,
 );
 
 $container->bind(
-    IdentificationInterface::class,
+    AuthenticationInterface::class,
     JsonBodyUuidIdentification::class
 );
+
+$container->bind(
+    AuthenticationInterface::class,
+    PasswordAuthentication::class
+);
+
+$container->bind(
+    PasswordAuthenticationInterface::class,
+    PasswordAuthentication::class
+);
+$container->bind(
+    AuthTokensRepositoryInterface::class,
+    SqliteAuthTokensRepository::class
+);
+
+$container->bind(
+    TokenAuthenticationInterface::class,
+    BearerTokenAuthentication::class
+);
+
 
 
 // Возвращаем объект контейнера

@@ -5,23 +5,44 @@ use Geekbrains\LevelTwo\Person\Name;
 
 class User
 {
-    private UUID $uuid;
-    private Name $name;
-    private string $username;
-
-    /**
-     * @param UUID $uuid
-     * @param Name $name
-     * @param string $username
-     */
-    public function __construct(UUID $uuid, Name $name, string $username)
-    {
-        $this->uuid = $uuid;
-        $this->name = $name;
-        $this->username = $username;
+    public function __construct(
+        private UUID $uuid,
+        private Name $name,
+        private string $username,
+        private string $hashedPassword,
+    ) {
     }
-
-    public function __toString(): string
+// Переименовали функцию
+    public function hashedPassword(): string
+    {
+        return $this->hashedPassword;
+    }
+// Функция для вычисления хеша
+    private static function hash(string $password, UUID $uuid): string
+    {
+        return hash('sha256', $uuid . $password);
+    }
+// Функция для проверки предъявленного пароля
+    public function checkPassword(string $password): bool
+    {
+        return $this->hashedPassword === self::hash($password, $this->uuid);
+    }
+// Функция для создания нового пользователя
+    public static function createFrom(
+        string $username,
+        string $password,
+        Name $name
+    ): self
+    {
+        $uuid = UUID::random();
+        return new self(
+            $uuid,
+            $name,
+            $username,
+            self::hash($password, $uuid)
+        );
+    }
+        public function __toString(): string
     {
         return "пользователь $this->uuid с именем $this->name и логином $this->username ";
     }
@@ -49,4 +70,18 @@ class User
     {
         return $this->username;
     }
+
+    /**
+     * @return string
+     */
+    public function getPassword(): string
+    {
+        return $this->hashedPassword;
+    }
+
+    /**
+     * @param UUID $uuid
+     * @param Name $name
+     * @param string $username
+     */
 }

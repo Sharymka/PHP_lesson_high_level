@@ -28,7 +28,8 @@ class SqliteUsersRepositoryTest extends TestCase
             'uuid' => 'e1b3db34-f69f-4425-bbfb-d437ed08a0a1',
             'first_name' => 'Linda',
             'last_name' => 'Petrova',
-            'username' => 'linda234'
+            'username' => 'linda234',
+            'password' => '123'
         ]);
 
 
@@ -41,6 +42,7 @@ class SqliteUsersRepositoryTest extends TestCase
         $this->assertSame('Linda', $user->name()->getFirstName());
         $this->assertSame('Petrova', $user->name()->getLastName());
         $this->assertSame('linda234', $user->username());
+        $this->assertSame('123', $user->getPassword());
     }
 
 
@@ -60,6 +62,7 @@ class SqliteUsersRepositoryTest extends TestCase
                 ':username' => 'ivan123',
                 ':first_name' => 'Ivan',
                 ':last_name' => 'Nikitin',
+                ':password' => '123'
             ]);
 
         $connectionStub->method('prepare')->willReturn($statementMock);
@@ -70,7 +73,8 @@ class SqliteUsersRepositoryTest extends TestCase
 // как и в описании мока
                 new UUID('123e4567-e89b-12d3-a456-426614174000'),
                 new Name('Ivan', 'Nikitin'),
-                'ivan123',)
+                'ivan123',
+                '123')
         );
     }
 }
