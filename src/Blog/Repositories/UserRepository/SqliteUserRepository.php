@@ -21,8 +21,8 @@ class SqliteUserRepository implements UsersRepositoryInterface
     public function save(User $user): void{
 
         $statement = $this->connection->prepare(
-            'INSERT INTO users (uuid, username, first_name, last_name)
-                VALUES (:uuid, :username, :first_name, :last_name)'
+            'INSERT INTO users (uuid, username, password, first_name, last_name)
+                VALUES (:uuid, :username, :password, :first_name, :last_name)'
         );
 // Выполняем запрос с конкретными значениями
         $statement->execute([
@@ -30,6 +30,7 @@ class SqliteUserRepository implements UsersRepositoryInterface
             ':username' => $user->username(),
             ':first_name' => $user->name()->getFirstName(),
             ':last_name' => $user->name()->getLastName(),
+            ':password' => $user->getPassword(),
 
         ]);
 
@@ -51,14 +52,15 @@ class SqliteUserRepository implements UsersRepositoryInterface
 
         if($result === false) {
             throw new UserNotFoundException(
-                "Cannot find user: uuid [$uuid]"
+                "User not found: uuid [$uuid]"
             );
         }
 
         return new User(
             new UUID($result['uuid']),
             new Name($result['first_name'], $result['last_name'] ),
-            $result['username']
+            $result['username'],
+            $result['password']
         );
     }
 
@@ -67,7 +69,6 @@ class SqliteUserRepository implements UsersRepositoryInterface
      * @throws InvalidArgumentException
      */
     public function getByUsername(string $username): User {
-        var_dump('привет ');
         $statement = $this->connection->prepare('SELECT * FROM users WHERE username = :username');
         $statement ->execute([
            ':username'=> $username
@@ -77,22 +78,15 @@ class SqliteUserRepository implements UsersRepositoryInterface
 
         if($result === false) {
             throw new UserNotFoundException(
-                "Cannot find user: name [$username]"
+                "User not found: name [$username]"
             );
         }
 
        return new User(
             new UUID($result['uuid']),
             new Name($result['first_name'], $result['last_name'] ),
-            $result['username']
+            $result['username'],
+            $result['password']
         );
     }
-
-//    private function getUser(?Array $result): User {
-//        return new User(
-//            new UUID($result['uuid']),
-//            new Name($result['first_name'], $result['last_name'] ),
-//            $result['username']
-//        );
-//    }
 }

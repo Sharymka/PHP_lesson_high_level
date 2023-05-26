@@ -1,15 +1,22 @@
 <?php
 
-namespace Geekbrains\LevelTwo\Commands;
+namespace Geekbrains\LevelTwo\UnitTests\Commands;
 
+use Geekbrains\LevelTwo\Blog\Commands\Arguments;
 use Geekbrains\LevelTwo\Blog\Commands\CreatePostCommand;
+use Geekbrains\LevelTwo\Blog\Exceptions\ArgumentsException;
 use Geekbrains\LevelTwo\Blog\Exceptions\CommandException;
+use Geekbrains\LevelTwo\Blog\Exceptions\PostNotFoundException;
+use Geekbrains\LevelTwo\Blog\Exceptions\UserNotFoundException;
 use Geekbrains\LevelTwo\Blog\Post;
+use Geekbrains\LevelTwo\Blog\Repositories\PostRepositories\PostsRepositoryInterface;
 use Geekbrains\LevelTwo\Blog\Repositories\PostRepositories\SqlitePostRepository;
 use Geekbrains\LevelTwo\Blog\Repositories\UserRepository\SqliteUserRepository;
+use Geekbrains\LevelTwo\Blog\Repositories\UserRepository\UsersRepositoryInterface;
 use Geekbrains\LevelTwo\Blog\User;
 use Geekbrains\LevelTwo\Blog\UUID;
 use Geekbrains\LevelTwo\Person\Name;
+use Geekbrains\LevelTwo\UnitTests\DummyLogger;
 use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\TestCase;
 
@@ -19,95 +26,85 @@ class CreatePostCommandTest extends TestCase
     /**
      * @throws Exception
      */
-    function testItReturnUserByUuid()
+    function testItReturnPostByUuid()
     {
-        $UserRepositoryStub = $this->createStub(SqliteUserRepository::class);
-        $PostRepositoryStub = $this->createStub(SqlitePostRepository::class);
+        $userRepositoryStub = $this->createStub(SqliteUserRepository::class);
+        $postRepositoryStub = $this->createStub(SqlitePostRepository::class);
+        $logger = new DummyLogger();
 
-        $UserRepositoryStub->method('get')->willReturn(
-            new User( // Свойства пользователя точно такие,
-// как и в описании мока
-                new UUID('f9cdfe1c-1a03-4786-89a4-f4a871696928'),
-                new Name('Linda', 'Petrova'),
-                'linda234',)
-        );
-        $command = new CreatePostCommand($UserRepositoryStub, $PostRepositoryStub);
-        $user = $command->getUser(new UUID('f9cdfe1c-1a03-4786-89a4-f4a871696928'));
+        $postRepositoryStub->method('get')->willReturn(
+            new Post(
+                new UUID('805e5cd4-b158-4556-bce4-53a7139b33d1'),
+                new User(
+                    new UUID('f9cdfe1c-1a03-4786-89a4-f4a871696928'),
+                    new Name('Linda', 'Petrova'),
+                    'linda234',
+                    '123'
+                ),
+                'title',
+                'text'));
 
-        $this->assertSame('f9cdfe1c-1a03-4786-89a4-f4a871696928', (string)$user->uuid());
-        $this->assertSame('Linda', $user->name()->getFirstName());
-        $this->assertSame('Petrova', $user->name()->getLastName());
-        $this->assertSame('linda234', $user->username());
+        $command = new CreatePostCommand($userRepositoryStub, $postRepositoryStub, $logger);
+        $post = $command->getPost(new UUID('f9cdfe1c-1a03-4786-89a4-f4a871696928'));
+
+        $this->assertSame('805e5cd4-b158-4556-bce4-53a7139b33d1', (string)$post->uuid());
+        $this->assertSame('Linda', $post->user()->name()->getFirstName());
+        $this->assertSame('Petrova', $post->user()->name()->getLastName());
+        $this->assertSame('linda234',  $post->user()->username());
+        $this->assertSame('123', $post->user()->getPassword());
     }
 
     /**
      * @throws CommandException
      * @throws Exception
      */
-    function testItReturnPostById()
-    {
-        $UserRepositoryStub = $this->createStub(SqliteUserRepository::class);
-        $PostRepositoryStub = $this->createStub(SqlitePostRepository::class);
 
-        $PostRepositoryStub->method('get')->willReturn([
-            'uuid' => 'f9cdfe1c-1a03-4786-89a4-f4a871696928',
-            'author_uuid' => 'f9cdfe1c-1a03-4786-89a4-f4a871696123',
-            'title' => 'title',
-            'text' => 'text'
-        ]);
-
-        $UserRepositoryStub->method('get')->willReturn(
-            new User( // Свойства пользователя точно такие,
-// как и в описании мока
-                new UUID('f9cdfe1c-1a03-4786-89a4-f4a871696123'),
-                new Name('Ivan', 'Nikitin'),
-                'ivan123',)
-        );
-
-        $command = new CreatePostCommand($UserRepositoryStub, $PostRepositoryStub);
-        $post = $command->getPost(new UUID('f9cdfe1c-1a03-4786-89a4-f4a871696928'));
-
-        $this->assertSame('f9cdfe1c-1a03-4786-89a4-f4a871696928', (string)$post->uuid());
-        $this->assertSame('f9cdfe1c-1a03-4786-89a4-f4a871696123', (string)$post->user()->uuid());
-        $this->assertSame('title', $post->title());
-        $this->assertSame('text', $post->text());
-
-    }
 
     /**
      * @throws Exception
      * @throws CommandException
+     * @throws ArgumentsException
      */
     function testItSavePostToRepository()
     {
-        $statementMock = $this->createMock(\PDOStatement::class);
-        $connectionStub = $this->createStub(\PDO::class);
-        $UserRepositoryStub = $this->createStub(SqliteUserRepository::class);
-        $PostRepositoryStub = new SqlitePostRepository($connectionStub);
+        $postsRepository = new class implements PostsRepositoryInterface {
+            private bool $called = false;
+            public function save(Post $post): void
+            {
+                $this->called = true;
+            }
+            public function get(UUID $uuid): Post
+            {
+                throw new PostNotFoundException("Not found");
+            }
+            public function getByUsername(string $username): Post
+            {
+                throw new PostNotFoundException("Not found");
+            }
 
-        $connectionStub->method('prepare')->willReturn($statementMock);
+            public function wasCalled(): bool
+            {
+                return $this->called;
+            }
 
-        $statementMock
-            ->expects($this->once())
-            ->method('execute')
-            ->with([
-                ':uuid' => 'f9cdfe1c-1a03-4786-89a4-f4a871696928',
-                ':author_uuid' => 'f9cdfe1c-1a03-4786-89a4-f4a871696123',
-                ':title' => 'title',
-                ':text' => 'text'
-            ]);
+            public function delete(UUID $uuid)
+            {
+                // TODO: Implement delete() method.
+            }
+        };
 
-        $command = new CreatePostCommand($UserRepositoryStub, $PostRepositoryStub);
-        $command->addPost(new Post(
-            new UUID('f9cdfe1c-1a03-4786-89a4-f4a871696928'),
-            new User(
-                new UUID('f9cdfe1c-1a03-4786-89a4-f4a871696123'),
-                new Name('first_name', 'last_name'),
-                'usename'
-            ),
-            'title',
-            'text'
-        ));
+        $logger = new DummyLogger();
+        $userRepositoryStub = $this->createStub(SqliteUserRepository::class);
+
+        $command = new CreatePostCommand($userRepositoryStub, $postsRepository, $logger);
+        $command->handle(new Arguments([
+            'author_uuid'=> 'f9cdfe1c-1a03-4786-89a4-f4a871696123',
+            'title' => 'title',
+            'text' => 'text'
+        ]));
+
+        $this->assertTrue($postsRepository->wasCalled());
+
     }
 
 }
