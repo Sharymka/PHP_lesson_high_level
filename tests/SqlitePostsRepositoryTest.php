@@ -1,6 +1,6 @@
 <?php
 
-namespace Geekbrains\LevelTwo;
+namespace Geekbrains\LevelTwo\UnitTests;
 
 use Geekbrains\LevelTwo\Blog\Commands\CreatePostCommand;
 use Geekbrains\LevelTwo\Blog\Exceptions\CommandException;
@@ -39,11 +39,12 @@ class SqlitePostsRepositoryTest extends TestCase
 
         $connectionStub->method('prepare')->willReturn($statementMock);
 
-        $repository = new SqlitePostRepository($connectionStub);
+        $repository = new SqlitePostRepository($connectionStub, new DummyLogger());
         $user = new User(
             new UUID('e15f6930-4a94-4f01-9d6c-3466133b3c77'),
             new Name('Svetlana','Ivanova'),
-            'sveta123'
+            'sveta123',
+            '123'
         );
 
         $repository->save(
@@ -64,20 +65,30 @@ class SqlitePostsRepositoryTest extends TestCase
     function testItGetsPostByUuid() {
 
         $connectionStub = $this->createStub(\PDO::class);
-        $statementMock = $this->createMock(\PDOStatement::class);
-        $statementMock->method('fetch')->willReturn([
-            'uuid'=>'f9cdfe1c-1a03-4786-89a4-f4a871696928',
+        $statementMockPost = $this->createMock(\PDOStatement::class);
+        $statementMockUser = $this->createMock(\PDOStatement::class);
+
+        $statementMockPost->method('fetch')->willReturn([
+            'uuid'=>'f9cdfe1c-1a03-4786-89a4-f4a871696222',
             'author_uuid'=>'f9cdfe1c-1a03-4786-89a4-f4a871696928',
             'title'=> 'title',
-            'text'=> 'text'
+            'text'=> 'text',
         ]);
 
-        $connectionStub->method('prepare')->willReturn($statementMock);
-        $repository = new SqlitePostRepository($connectionStub);
+        $statementMockUser->method('fetch')->willReturn([
+            'uuid'=>'f9cdfe1c-1a03-4786-89a4-f4a871696928',
+            'first_name' => 'Ivan',
+            'last_name' => 'Petrov',
+            'username'=> 'ivan123',
+            'password' => '123'
+        ]);
+
+        $connectionStub->method('prepare')->willReturn($statementMockPost, $statementMockUser);
+        $repository = new SqlitePostRepository($connectionStub, new DummyLogger());
 
         $post = $repository->get(new UUID('f9cdfe1c-1a03-4786-89a4-f4a871696928'));
 
-        $this->assertSame('f9cdfe1c-1a03-4786-89a4-f4a871696928', $post['uuid']);
+        $this->assertSame('f9cdfe1c-1a03-4786-89a4-f4a871696222', (string)$post->uuid());
     }
 
     function testItTrowsAnExceptionWhenPostNotFound(){
@@ -88,16 +99,16 @@ class SqlitePostsRepositoryTest extends TestCase
             ->expects($this->once())
             ->method('execute')
             ->with([
-                'uuid'=>'f9cdfe1c-1a03-4786-89a4-f4a871696928',
+                ':uuid'=>'f9cdfe1c-1a03-4786-89a4-f4a871696928',
             ]);
 
         $statementMock->method('fetch')->willReturn(false);
 
-        $this->expectException(CommandException::class);
-        $this->expectExceptionMessage("Not found Post with id: f9cdfe1c-1a03-4786-89a4-f4a871696928");
+        $this->expectException(PostNotFoundException::class);
+        $this->expectExceptionMessage("Post not found: uuid [f9cdfe1c-1a03-4786-89a4-f4a871696928]");
 
         $connectionStub->method('prepare')->willReturn($statementMock);
-        $repository = new SqlitePostRepository($connectionStub);
+        $repository = new SqlitePostRepository($connectionStub, new DummyLogger());
 
         $repository->get(new UUID('f9cdfe1c-1a03-4786-89a4-f4a871696928'));
 

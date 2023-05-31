@@ -3,46 +3,48 @@ require_once __DIR__ .  "/vendor/autoload.php";
 
 
 use Geekbrains\LevelTwo\Blog\Commands\Arguments;
-use Geekbrains\LevelTwo\Blog\Commands\CreateCommentCommand;
-use Geekbrains\LevelTwo\Blog\Commands\CreatePostCommand;
 use Geekbrains\LevelTwo\Blog\Commands\CreateUserCommand;
-use Geekbrains\LevelTwo\Blog\Commands\OtherArguments;
-use Geekbrains\LevelTwo\Blog\Comment;
-use Geekbrains\LevelTwo\Blog\Post;
-use Geekbrains\LevelTwo\Blog\Repositories\CommentsRepository\SqliteCommentRepository;
-use Geekbrains\LevelTwo\Blog\Repositories\PostRepositories\SqlitePostRepository;
-use Geekbrains\LevelTwo\Blog\Repositories\UserRepository\SqliteUserRepository;
-use \Geekbrains\LevelTwo\Blog\Exceptions\CommandException;
-use Geekbrains\LevelTwo\Blog\UUID;
-use \Geekbrains\LevelTwo\Blog\Exceptions\ArgumentsException;
-use Geekbrains\LevelTwo\Blog\User;
-use Geekbrains\LevelTwo\Person\Name;
+use Geekbrains\LevelTwo\Blog\Commands\FakeData\PopulateDB;
+use Geekbrains\LevelTwo\Blog\Commands\Posts\DeletePost;
+use Geekbrains\LevelTwo\Blog\Commands\Users\CreateUser;
+use Geekbrains\LevelTwo\Blog\Commands\Users\UpdateUser;
+use Geekbrains\LevelTwo\Blog\Exceptions\AppException;
+use Psr\Log\LoggerInterface;
+use Symfony\Component\Console\Application;
+
+$container = require __DIR__ . '/bootstrap.php';
+
+// Создаём объект приложения
+$application = new Application();
+// Перечисляем классы команд
+$commandsClasses = [
+    CreateUser::class,
+    DeletePost::class,
+    UpdateUser::class,
+    PopulateDB::class,
+
+];
+foreach ($commandsClasses as $commandClass) {
+// Посредством контейнера
+// создаём объект команды
+    $command = $container->get($commandClass);
+// Добавляем команду к приложению
+    $application->add($command);
+}
+
 
 $connection = new PDO('sqlite:' . __DIR__ . '/blog.sqlite');
+//
+//$command = $container->get(CreateUserCommand::class);
+$logger = $container->get(LoggerInterface::class);
 
-$usersRepository = new SqliteUserRepository($connection);
-$commentRepository = new SqliteCommentRepository($connection);
-$postRepository = new SqlitePostRepository($connection);
 
 try {
-//    $command = new CreateUserCommand($usersRepository);
+    // Запускаем приложение
+    $application->run();
 //    $command->handle(Arguments::fromArgv($argv));
-
-    //добавление комментария из командной строки
-//    $commentCommand = new CreateCommentCommand($commentRepository);
-//    $commentCommand->addComment((new Comment((new UUID(UUID::random()))->getUuidString(), '6666', '44444', OtherArguments::get($argv))));
-//    $comment = $commentCommand->get((new UUID('1fce963f-e6ab-4861-9632-c95c37f8c755')));
-//    var_dump($comment);
-
-    $user = new User(new UUID(UUID::random()), new Name('Lev', 'Petrushin'), 'lev2022');
-    // добавление поста из командной строки
-    $postCommand = new CreatePostCommand($postRepository);
-//    $postCommand->addPost(new Post((new UUID(UUID::random())), $user, 'wather',  OtherArguments::get($argv) ));
-    $post = $postCommand->get(new UUID('acbc10fe-78a2-4c47-8833-8ebbc34a9bcb'));
-    var_dump($post);
-
-} catch (CommandException $ex) {
-    echo $ex->getMessage();
-} catch (ArgumentsException $e) {
-    echo $e->getMessage();
+} catch (AppException $e) {
+    $logger->error($e->getMessage(), ['exception' => $e]);
+    echo "{$e->getMessage()}\n";
 }
+
