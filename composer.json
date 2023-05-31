@@ -16,16 +16,17 @@
         }
     ],
     "require": {
+        "fakerphp/faker": "^1.21",
         "php": "^8.0",
         "ext-pdo": "*",
         "symfony/polyfill-uuid": "^1.27",
         "ext-mbstring": "*",
         "monolog/monolog": "^3.3",
         "ext-http": "*",
-        "vlucas/phpdotenv": "^5.5"
+        "vlucas/phpdotenv": "^5.5",
+        "symfony/console": "^6.2"
     },
     "require-dev": {
-        "fakerphp/faker": "^1.21",
         "phpunit/phpunit": "^10.1"
     },
     "scripts": {

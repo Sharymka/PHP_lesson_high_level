@@ -1,5 +1,10 @@
 <?php
 
+use Faker\Provider\Internet;
+use Faker\Provider\Lorem;
+use Faker\Provider\Person;
+//use Faker\Provider\Text;
+use Faker\Generator;
 use Geekbrains\LevelTwo\Blog\Container\DIContainer;
 use Geekbrains\LevelTwo\Blog\Repositories\AuthTokensRepository\AuthTokensRepositoryInterface;
 use Geekbrains\LevelTwo\Blog\Repositories\AuthTokensRepository\SqliteAuthTokensRepository;
@@ -117,6 +122,24 @@ $container->bind(
     TokenAuthenticationInterface::class,
     BearerTokenAuthentication::class
 );
+
+
+// Создаём объект генератора тестовых данных
+//$faker = new \Faker\Generator();
+// Инициализируем необходимые нам виды данных
+$faker = Faker\Factory::create();
+//$faker->addProvider(new Person($faker));
+//$faker->addProvider($faker->text());
+//$faker->addProvider(new Internet($faker));
+//$faker->addProvider(new Lorem($faker));
+
+// Добавляем генератор тестовых данных
+// в контейнер внедрения зависимостей
+$container->bind(
+    Generator::class,
+    $faker
+);
+
 
 
 

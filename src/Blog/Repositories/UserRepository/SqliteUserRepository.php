@@ -21,16 +21,19 @@ class SqliteUserRepository implements UsersRepositoryInterface
     public function save(User $user): void{
 
         $statement = $this->connection->prepare(
-            'INSERT INTO users (uuid, username, password, first_name, last_name)
-                VALUES (:uuid, :username, :password, :first_name, :last_name)'
+            'INSERT INTO users (uuid, password, first_name, last_name, username)
+                VALUES (:uuid, :username,  :first_name, :last_name, :password)
+                ON CONFLICT (uuid) DO UPDATE SET
+                first_name = :first_name,
+                last_name = :last_name'
         );
 // Выполняем запрос с конкретными значениями
         $statement->execute([
             ':uuid' => (string)$user->uuid(),
-            ':username' => $user->username(),
+            ':password' => $user->getPassword(),
             ':first_name' => $user->name()->getFirstName(),
             ':last_name' => $user->name()->getLastName(),
-            ':password' => $user->getPassword(),
+            ':username' => $user->username(),
 
         ]);
 
