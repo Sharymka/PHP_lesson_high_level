@@ -6,39 +6,45 @@ use Geekbrains\LevelTwo\Blog\Exceptions\CommandException;
 use Geekbrains\LevelTwo\Blog\Exceptions\InvalidArgumentException;
 use Geekbrains\LevelTwo\Blog\Exceptions\UserNotFoundException;
 use Geekbrains\LevelTwo\Blog\Post;
+use Geekbrains\LevelTwo\Blog\Repositories\PostRepositories\PostsRepositoryInterface;
 use Geekbrains\LevelTwo\Blog\Repositories\PostRepositories\SqlitePostRepository;
 use Geekbrains\LevelTwo\Blog\Repositories\UserRepository\SqliteUserRepository;
 use Geekbrains\LevelTwo\Blog\User;
 use Geekbrains\LevelTwo\Blog\UUID;
 use Geekbrains\LevelTwo\Person\Name;
+use Psr\Log\LoggerInterface;
 
 class CreatePostCommand
 {
 
     public function __construct(
-        private SqliteUserRepository $userRepository,
-        private SqlitePostRepository $postRepository
+        private SqliteUserRepository $usersRepository,
+        private PostsRepositoryInterface $postsRepository,
+        private LoggerInterface $logger
 
     )
     {
     }
-     public function addPost(Post $post) {
-        $this->postRepository->save($post);
-     }
 
-    /**
-     * @throws CommandException
-     */
-    public function getPost(UUID $uuid) {
-        $result =  $this->postRepository->get($uuid);
-        return new Post(new UUID($result['uuid']), $this->getUser(new UUID($result['author_uuid'])), $result['title'], $result['text']);
-     }
+    public function handle(Arguments $arguments) {
 
-    /**
-     * @throws UserNotFoundException
-     * @throws InvalidArgumentException
-     */
-    public function getUser(UUID $uuid) {
-        return $this->userRepository->get($uuid);
+        $this->logger->info("Create post command started");
+
+        $uuid = UUID::random();
+
+        $author_uuid = $arguments->get('author_uuid');
+        $user = $this->usersRepository->get(new UUID($author_uuid));
+
+        $this->postsRepository->save( new Post(
+            $uuid,
+            $user,
+            $arguments->get('title'),
+            $arguments->get('text')
+        ));
+        $this->logger->info("User created: $uuid");
+    }
+
+    public function getPost(UUID $uuid): Post {
+        return $this->postsRepository->get($uuid);
     }
 }

@@ -4,10 +4,14 @@ namespace Geekbrains\LevelTwo\Blog\Repositories\CommentsRepository;
 
 use Geekbrains\LevelTwo\Blog\Comment;
 use Geekbrains\LevelTwo\Blog\Exceptions\CommandException;
+use Geekbrains\LevelTwo\Blog\Exceptions\CommentNotFoundException;
+use Geekbrains\LevelTwo\Blog\Exceptions\InvalidArgumentException;
+use Geekbrains\LevelTwo\Blog\Repositories\PostRepositories\SqlitePostRepository;
+use Geekbrains\LevelTwo\Blog\Repositories\UserRepository\SqliteUserRepository;
 use Geekbrains\LevelTwo\Blog\UUID;
 use PDO;
 
-class SqliteCommentRepository
+class SqliteCommentRepository implements CommentsRepositoryInterface
 {
     private PDO $connection;
     public function __construct(PDO $connection) {
@@ -34,25 +38,33 @@ class SqliteCommentRepository
 
     /**
      * @throws CommandException
+     * @throws CommentNotFoundException
+     * @throws InvalidArgumentException
      */
     public function get(UUID $uuid): Comment {
         $statement = $this->connection->prepare(
             'SELECT * FROM comments WHERE uuid = :uuid'
         );
         $statement->execute([
-            'uuid'=> (string) $uuid,
+            ':uuid'=> (string) $uuid,
         ]);
 
         $result = $statement->fetch(PDO::FETCH_ASSOC);
 
         if(!$result) {
-            throw new CommandException("Not found Comment with id: $uuid");
+            throw new CommentNotFoundException("Not found Comment with id: $uuid");
         }
 
+        $userRepository = new SqliteUserRepository($this->connection);
+        $postRepository = new SqlitePostRepository($this->connection);
+
+        $user = $userRepository->get(new UUID($result['author_uuid']));
+        $post = $postRepository->get(new UUID( $result['post_uuid']));
+
         return new Comment(
-            $result['uuid'],
-            $result['post_uuid'],
-            $result['author_uuid'],
+            new UUID($result['uuid']),
+            $post,
+            $user,
             $result['text']
         );
     }

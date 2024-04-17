@@ -2,14 +2,13 @@
 
 namespace Geekbrains\LevelTwo\Blog;
 
-use Geekbrains\LevelTwo\Person\Person;
-
 class Post
 {
     private UUID $uuid;
     private User $user;
     private string $title;
     private string $text;
+
 
 
     /**
