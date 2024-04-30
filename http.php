@@ -25,19 +25,19 @@ $request = new Request(
     file_get_contents('php://input'),
 );
 
-//$logger = $container->get(LoggerInterface::class);
+$logger = $container->get(LoggerInterface::class);
 
 try {
     $path = $request->path();
 } catch (HttpException $e) {
-//    $logger->warning($e->getMessage());
+    $logger->warning($e->getMessage());
     (new ErrorResponse)->send();
     return;
 }
 try {
     $method = $request->method();
 } catch (HttpException $e) {
-//    $logger->warning($e->getMessage());
+    $logger->warning($e->getMessage());
     (new ErrorResponse)->send();
     return;
 }
@@ -48,7 +48,7 @@ $routes = [
     // применяемых к запросам с разными методами
     'GET' => [
         '/users/show' =>  FindByUsername::class,
-    //        '/posts/show' =>  FindByUuid::class,
+//            '/posts/show' =>  FindByUuid::class,
     ],
     'POST' => [
      // Добавили новый маршрут
@@ -70,7 +70,7 @@ if (!array_key_exists($method, $routes)
     || !array_key_exists($path, $routes[$method])) {
 // Логируем сообщение с уровнем NOTICE
     $message = "Route not found: $method $path";
-//    $logger->notice($message);
+    $logger->notice($message);
     (new ErrorResponse($message))->send();
     return;
 }
@@ -82,7 +82,7 @@ try {
     $response = $action->handle($request);
 } catch (Exception $e) {
 // Логируем сообщение с уровнем ERROR
-//    $logger->error($e->getMessage(), ['exception' => $e]);
+    $logger->error($e->getMessage(), ['exception' => $e]);
 // Больше не отправляем пользователю
 // конкретное сообщение об ошибке,
 // а только логируем его
