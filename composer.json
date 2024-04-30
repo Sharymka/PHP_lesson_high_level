@@ -7,7 +7,7 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "Geekbrains\\LevelTwo\\UnitTests\\": "tests/"
+            "Geekbrains\\levelTwo\\UnitTests\\": "tests/"
         }
     },
     "authors": [
@@ -24,12 +24,13 @@
         "monolog/monolog": "^3.3",
         "ext-http": "*",
         "vlucas/phpdotenv": "^5.5",
-        "symfony/console": "^6.2"
+        "symfony/console": "^6.2",
+        "roave/security-advisories": "dev-latest"
     },
     "require-dev": {
-        "phpunit/phpunit": "^10.1"
+        "phpunit/phpunit": "^10.5"
     },
     "scripts": {
-        "test": "phpunit tests --testdox --colors"
+        "test": "vendor/bin/phpunit tests --testdox --colors"
     }
 }

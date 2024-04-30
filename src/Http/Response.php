@@ -7,7 +7,11 @@ namespace Geekbrains\LevelTwo\Http;
     // Маркировка успешности ответа
     protected const SUCCESS = true;
     // Метод для отправки ответа
-    public function send(): void
+
+     /**
+      * @throws \JsonException
+      */
+     public function send(): void
     {
         // Данные ответа:
         // маркировка успешности и полезные данные

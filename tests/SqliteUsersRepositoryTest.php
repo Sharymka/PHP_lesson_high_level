@@ -6,7 +6,7 @@ use Geekbrains\LevelTwo\Blog\Exceptions\InvalidArgumentException;
 use Geekbrains\LevelTwo\Blog\Exceptions\UserNotFoundException;
 use Geekbrains\LevelTwo\Blog\User;
 use Geekbrains\LevelTwo\Blog\UUID;
-use Geekbrains\LevelTwo\Person\Name;
+use PHP\highLevel\Person\Name;
 use PDO;
 use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\TestCase;

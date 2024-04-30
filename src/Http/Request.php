@@ -42,7 +42,6 @@ class Request
             // Бросаем исключение при ошибке
                 flags: JSON_THROW_ON_ERROR
             );
-            var_dump($data);
         } catch (JsonException) {
             throw new HttpException("Cannot decode json body");
         }

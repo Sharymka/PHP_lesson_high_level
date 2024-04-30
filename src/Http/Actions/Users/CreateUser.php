@@ -2,10 +2,7 @@
 
 namespace Geekbrains\LevelTwo\Http\Actions\Users;
 
-use Geekbrains\LevelTwo\Blog\Exceptions\AuthException;
 use Geekbrains\LevelTwo\Blog\Exceptions\HttpException;
-use Geekbrains\LevelTwo\Blog\Exceptions\UserAlreadyExistException;
-use Geekbrains\LevelTwo\Blog\Repositories\PostRepositories\PostsRepositoryInterface;
 use Geekbrains\LevelTwo\Blog\Repositories\UserRepository\UsersRepositoryInterface;
 use Geekbrains\LevelTwo\Blog\User;
 use Geekbrains\LevelTwo\Blog\UUID;
@@ -32,12 +29,12 @@ class CreateUser implements ActionInterface
     public function handle(Request $request): Response
     {
 
-        if($this->authentication->user($request)) {
-            throw new UserAlreadyExistException("User already exist");
-        }
+//        if($this->usersRepository->getByUsername($request->jsonBodyField('username'))) {
+//            throw new UserAlreadyExistException("User already exist");
+//        }
 
        try{
-           $newUserUuid = UUID::random();
+//           $newUserUuid = UUID::random();
            $user =  User::createFrom(
                $request->jsonBodyField("username"),
                $request->jsonBodyField("password"),
@@ -49,10 +46,10 @@ class CreateUser implements ActionInterface
 
        $this->usersRepository->save($user);
 
-       $this->logger->info("User created: uuid[$newUserUuid]");
+       $this->logger->info("User created: uuid[" . $user->uuid() . "]");
 
-       return new SuccessfulResponse([
-           'uuid'=> (string)$newUserUuid,
-       ]);
+        return new SuccessfulResponse([
+            'uuid'=> (string)$user->uuid(),
+        ]);
     }
 }

@@ -10,7 +10,7 @@ use Geekbrains\LevelTwo\Http\Actions\Users\FindByUsername;
 use Geekbrains\LevelTwo\Http\ErrorResponse;
 use Geekbrains\LevelTwo\Http\Request;
 use Geekbrains\LevelTwo\Http\SuccessfulResponse;
-use Geekbrains\LevelTwo\Person\Name;
+use PHP\highLevel\Person\Name;
 use PHPUnit\Framework\TestCase;
 
 class FindByUsernameActionTest extends TestCase

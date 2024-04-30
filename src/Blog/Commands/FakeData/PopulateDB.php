@@ -10,7 +10,7 @@ use Geekbrains\LevelTwo\Blog\Repositories\PostRepositories\PostsRepositoryInterf
 use Geekbrains\LevelTwo\Blog\Repositories\UserRepository\UsersRepositoryInterface;
 use Geekbrains\LevelTwo\Blog\User;
 use Geekbrains\LevelTwo\Blog\UUID;
-use Geekbrains\LevelTwo\Person\Name;
+use PHP\highLevel\Person\Name;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;

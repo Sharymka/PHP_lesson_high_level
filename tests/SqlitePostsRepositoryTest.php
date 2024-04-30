@@ -10,7 +10,7 @@ use Geekbrains\LevelTwo\Blog\Post;
 use Geekbrains\LevelTwo\Blog\Repositories\UserRepository\UsersRepositoryInterface;
 use Geekbrains\LevelTwo\Blog\User;
 use Geekbrains\LevelTwo\Blog\UUID;
-use Geekbrains\LevelTwo\Person\Name;
+use PHP\highLevel\Person\Name;
 use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\TestCase;
 use Geekbrains\LevelTwo\Blog\Repositories\PostRepositories\SqlitePostRepository;

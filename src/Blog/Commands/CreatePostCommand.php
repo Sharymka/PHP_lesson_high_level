@@ -11,7 +11,7 @@ use Geekbrains\LevelTwo\Blog\Repositories\PostRepositories\SqlitePostRepository;
 use Geekbrains\LevelTwo\Blog\Repositories\UserRepository\SqliteUserRepository;
 use Geekbrains\LevelTwo\Blog\User;
 use Geekbrains\LevelTwo\Blog\UUID;
-use Geekbrains\LevelTwo\Person\Name;
+use PHP\highLevel\Person\Name;
 use Psr\Log\LoggerInterface;
 
 class CreatePostCommand

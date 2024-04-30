@@ -15,6 +15,9 @@ class DIContainer
         $this->resolvers[$type] = $resolver;
     }
 
+    /**
+     * @throws NotFoundException
+     */
     public function get(string $type): object
     {
         if (array_key_exists($type, $this->resolvers)) {

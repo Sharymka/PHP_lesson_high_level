@@ -14,7 +14,7 @@ use Geekbrains\LevelTwo\Http\Actions\Post\CreatePost;
 use Geekbrains\LevelTwo\Http\Auth\JsonBodyUuidIdentification;
 use Geekbrains\LevelTwo\Http\ErrorResponse;
 use Geekbrains\LevelTwo\Http\Request;
-use Geekbrains\LevelTwo\Person\Name;
+use PHP\highLevel\Person\Name;
 use Geekbrains\LevelTwo\UnitTests\DummyLogger;
 use PHPUnit\Event\Code\Throwable;
 use PHPUnit\Framework\MockObject\Exception;

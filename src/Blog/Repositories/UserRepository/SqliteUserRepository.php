@@ -22,7 +22,7 @@ class SqliteUserRepository implements UsersRepositoryInterface
 
         $statement = $this->connection->prepare(
             'INSERT INTO users (uuid, password, first_name, last_name, username)
-                VALUES (:uuid, :username,  :first_name, :last_name, :password)
+                VALUES (:uuid, :password, :first_name, :last_name, :username)
                 ON CONFLICT (uuid) DO UPDATE SET
                 first_name = :first_name,
                 last_name = :last_name'

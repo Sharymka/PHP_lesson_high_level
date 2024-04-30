@@ -4,8 +4,8 @@ require_once __DIR__ .  "/vendor/autoload.php";
 
 use Geekbrains\LevelTwo\Blog\Post;
 use Geekbrains\LevelTwo\Blog\User;
-use Geekbrains\LevelTwo\Person\Name;
-use Geekbrains\LevelTwo\Person\Person;
+use PHP\highLevel\Person\Name;
+use PHP\highLevel\Person\Person;
 use Geekbrains\LevelTwo\Blog\Comment;
 use Geekbrains\LevelTwo\Blog\Repositories\InMemoryUserRepository;
 use Geekbrains\LevelTwo\Blog\Exceptions\UserNotFoundException;

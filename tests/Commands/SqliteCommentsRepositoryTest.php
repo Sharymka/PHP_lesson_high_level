@@ -8,7 +8,7 @@ use Geekbrains\LevelTwo\Blog\Post;
 use Geekbrains\LevelTwo\Blog\Repositories\CommentsRepository\SqliteCommentRepository;
 use Geekbrains\LevelTwo\Blog\User;
 use Geekbrains\LevelTwo\Blog\UUID;
-use Geekbrains\LevelTwo\Person\Name;
+use PHP\highLevel\Person\Name;
 use PHPUnit\Framework\TestCase;
 
 class SqliteCommentsRepositoryTest extends TestCase
