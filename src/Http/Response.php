@@ -6,7 +6,6 @@ namespace Geekbrains\LevelTwo\Http;
 {
     // Маркировка успешности ответа
     protected const SUCCESS = true;
-    // Метод для отправки ответа
 
      /**
       * @throws \JsonException

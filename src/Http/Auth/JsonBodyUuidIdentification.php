@@ -11,7 +11,7 @@ use Geekbrains\LevelTwo\Blog\User;
 use Geekbrains\LevelTwo\Blog\UUID;
 use Geekbrains\LevelTwo\Http\Request;
 
-class JsonBodyUuidIdentification implements IdentificationInterface
+class JsonBodyUuidIdentification implements IdentificationInterface, \Geekbrains\LevelTwo\Http\Auth\TokenAuthenticationInterface
 {
 
     public function __construct(

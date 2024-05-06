@@ -2,20 +2,15 @@
 
 namespace Geekbrains\LevelTwo\UnitTests;
 
-use Geekbrains\LevelTwo\Blog\Commands\CreatePostCommand;
 use Geekbrains\LevelTwo\Blog\Exceptions\CommandException;
 use Geekbrains\LevelTwo\Blog\Exceptions\PostNotFoundException;
-use Geekbrains\LevelTwo\Blog\Exceptions\UserNotFoundException;
 use Geekbrains\LevelTwo\Blog\Post;
-use Geekbrains\LevelTwo\Blog\Repositories\UserRepository\UsersRepositoryInterface;
 use Geekbrains\LevelTwo\Blog\User;
 use Geekbrains\LevelTwo\Blog\UUID;
-use PHP\highLevel\Person\Name;
+use Geekbrains\LevelTwo\Person\Name;
 use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\TestCase;
 use Geekbrains\LevelTwo\Blog\Repositories\PostRepositories\SqlitePostRepository;
-use Geekbrains\LevelTwo\Blog\Repositories\UserRepository\SqliteUserRepository;
-use Geekbrains\LevelTwo\Blog\Repositories\PostRepositories\PostsRepositoryInterface;
 
 class SqlitePostsRepositoryTest extends TestCase
 {
@@ -39,7 +34,7 @@ class SqlitePostsRepositoryTest extends TestCase
 
         $connectionStub->method('prepare')->willReturn($statementMock);
 
-        $repository = new SqlitePostRepository($connectionStub, new DummyLogger());
+        $repository = new SqlitePostRepository($connectionStub);
         $user = new User(
             new UUID('e15f6930-4a94-4f01-9d6c-3466133b3c77'),
             new Name('Svetlana','Ivanova'),

@@ -15,7 +15,7 @@ use Geekbrains\LevelTwo\Blog\Repositories\UserRepository\SqliteUserRepository;
 use Geekbrains\LevelTwo\Blog\Repositories\UserRepository\UsersRepositoryInterface;
 use Geekbrains\LevelTwo\Blog\User;
 use Geekbrains\LevelTwo\Blog\UUID;
-use PHP\highLevel\Person\Name;
+use Geekbrains\LevelTwo\Person\Name;
 use Geekbrains\LevelTwo\UnitTests\DummyLogger;
 use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\TestCase;
@@ -87,7 +87,7 @@ class CreatePostCommandTest extends TestCase
                 return $this->called;
             }
 
-            public function delete(UUID $uuid)
+            public function delete(UUID $uuid): void
             {
                 // TODO: Implement delete() method.
             }

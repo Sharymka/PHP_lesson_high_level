@@ -2,7 +2,7 @@
 
 namespace Geekbrains\LevelTwo\UnitTests\Container;
 
-use Geekbrains\levelTwo\Blog\Container\DIContainer;
+use Geekbrains\LevelTwo\Blog\Container\DIContainer;
 use Geekbrains\LevelTwo\Blog\Exceptions\NotFoundException;
 use Geekbrains\LevelTwo\Blog\Repositories\UserRepository\InMemoryUserRepository;
 use Geekbrains\LevelTwo\Blog\Repositories\UserRepository\UsersRepositoryInterface;

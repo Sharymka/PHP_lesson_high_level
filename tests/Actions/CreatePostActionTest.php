@@ -14,9 +14,9 @@ use Geekbrains\LevelTwo\Http\Actions\Post\CreatePost;
 use Geekbrains\LevelTwo\Http\Auth\JsonBodyUuidIdentification;
 use Geekbrains\LevelTwo\Http\ErrorResponse;
 use Geekbrains\LevelTwo\Http\Request;
-use PHP\highLevel\Person\Name;
+use Geekbrains\LevelTwo\Person\Name;
 use Geekbrains\LevelTwo\UnitTests\DummyLogger;
-use PHPUnit\Event\Code\Throwable;
+use JsonException;
 use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\TestCase;
 
@@ -51,7 +51,8 @@ class CreatePostActionTest extends TestCase
                 return new User(
                     new UUID('e1b3db34-f69f-4425-bbfb-d437ed08a0a1'),
                     new Name('Leo', 'Petrov'),
-                    'leo222'
+                    'leo222',
+                    '32d5a66d326784147b16a555c90c0e9db0e7497aacf6a2cac910a61357aae294'
                 );
             }
         };
@@ -92,7 +93,7 @@ class CreatePostActionTest extends TestCase
                 throw new PostNotFoundException("Post not found Post: uuid [$uuid]");
             }
 
-            public function delete(UUID $uuid)
+            public function delete(UUID $uuid): void
             {
                 // TODO: Implement delete() method.
             }
@@ -101,7 +102,7 @@ class CreatePostActionTest extends TestCase
 
     /**
      * @throws Exception
-     * @throws \JsonException
+     * @throws JsonException
      */
 //    public function testItReTurnsSuccessfulResponse() {
 //        $userRepository = $this->userRepository([
@@ -135,7 +136,7 @@ class CreatePostActionTest extends TestCase
 //    }
 
     /**
-     * @throws Exception
+     * @throws Exception|JsonException
      */
     function testItReturnsErrorIfRequestContainsInvalidUuid() {
 
@@ -156,7 +157,7 @@ class CreatePostActionTest extends TestCase
 
     /**
      * @throws Exception
-     * @throws \JsonException
+     * @throws JsonException
      */
     function testItReturnsErrorIfUserNotFoundByUuid() {
 
@@ -174,7 +175,7 @@ class CreatePostActionTest extends TestCase
     }
     /**
      * @throws Exception
-     * @throws \JsonException
+     * @throws JsonException
      */
     public function testItReturnsErrorIfRequestDoesNotContainEnoughDataForCreatePost(): void {
 

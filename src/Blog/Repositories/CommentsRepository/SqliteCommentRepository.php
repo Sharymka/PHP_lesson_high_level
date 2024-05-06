@@ -6,9 +6,12 @@ use Geekbrains\LevelTwo\Blog\Comment;
 use Geekbrains\LevelTwo\Blog\Exceptions\CommandException;
 use Geekbrains\LevelTwo\Blog\Exceptions\CommentNotFoundException;
 use Geekbrains\LevelTwo\Blog\Exceptions\InvalidArgumentException;
+use Geekbrains\LevelTwo\Blog\Exceptions\UserNotFoundException;
 use Geekbrains\LevelTwo\Blog\Repositories\PostRepositories\SqlitePostRepository;
 use Geekbrains\LevelTwo\Blog\Repositories\UserRepository\SqliteUserRepository;
 use Geekbrains\LevelTwo\Blog\UUID;
+use Geekbrains\LevelTwo\Http\ErrorResponse;
+use Geekbrains\LevelTwo\Http\Response;
 use PDO;
 
 class SqliteCommentRepository implements CommentsRepositoryInterface
@@ -40,8 +43,10 @@ class SqliteCommentRepository implements CommentsRepositoryInterface
      * @throws CommandException
      * @throws CommentNotFoundException
      * @throws InvalidArgumentException
+     * @throws UserNotFoundException
      */
-    public function get(UUID $uuid): Comment {
+    public function get(UUID $uuid): Comment
+    {
         $statement = $this->connection->prepare(
             'SELECT * FROM comments WHERE uuid = :uuid'
         );
@@ -57,6 +62,7 @@ class SqliteCommentRepository implements CommentsRepositoryInterface
 
         $userRepository = new SqliteUserRepository($this->connection);
         $postRepository = new SqlitePostRepository($this->connection);
+
 
         $user = $userRepository->get(new UUID($result['author_uuid']));
         $post = $postRepository->get(new UUID( $result['post_uuid']));

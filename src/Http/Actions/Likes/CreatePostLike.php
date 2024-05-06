@@ -27,6 +27,7 @@ class CreatePostLike implements ActionInterface
 
     public function __construct(
         private PostsRepositoryInterface $postsRepository,
+        private UsersRepositoryInterface $usersRepository,
         private PostLikesRepositoryInterface $postLikesRepository,
         private TokenAuthenticationInterface $authentication,
         private LoggerInterface $logger
@@ -59,15 +60,9 @@ class CreatePostLike implements ActionInterface
             $this->logger->warning("Post not found: uuid[$postUuid]");
             return new ErrorResponse($e->getMessage());
         }
-//        try{
-//            $user = $this->usersRepository->get(new UUID($userUuid));
-//        } catch(UserNotFoundException $e) {
-//            $this->logger->warning("User not found: uuid[$userUuid]");
-//            return new ErrorResponse($e->getMessage());
-//        }
 
         try{
-            $this->postLikesRepository->checkUserLikeForPostExists($user->uuid(), $postUuid );
+            $this->postLikesRepository->checkUserLikeForPostExists($user->uuid(), $postUuid);
         } catch(LikeAlreadyExistsException $e) {
             return new ErrorResponse($e->getMessage());
         }
